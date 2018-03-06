@@ -1,0 +1,11 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.windwant.rest.mapper.RestMapper">
+    <select id="selectStudent" parameterType="String" resultType="MAP">
+        select * from students
+        <if test="_parameter != null and _parameter != ''">
+            where name = #{name}
+        </if>
+    </select>
+</mapper>

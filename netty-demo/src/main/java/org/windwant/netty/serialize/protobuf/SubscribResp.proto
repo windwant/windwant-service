@@ -1,0 +1,8 @@
+option java_package = "com.mycompany.helloworld.netty.serialize.protobuf";
+option java_outer_classname = "SubscripRespProto";
+
+message SubscripResp{
+    required int32 subReqID=1;
+    required int32 respCode=2;
+    required string desc=3;
+}
