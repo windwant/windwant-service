@@ -21,6 +21,11 @@
         <module>rocketmq-demo</module>
         <module>zookeeper-demo</module>
         <module>netty-demo</module>
+        <module>elasticjob-demo</module>
+        <module>algorithm-demo</module>
+        <module>consul-demo</module>
+        <module>cxf-demo</module>
+        <module>spring-aop-demo</module>
     </modules>
 
 </project>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxws
+       http://cxf.apache.org/schemas/jaxws.xsd
+       http://cxf.apache.org/jaxrs
+       http://cxf.apache.org/schemas/jaxrs.xsd">
+       <jaxws:endpoint id="cxfDemo" implementor="com.nie.cxf.server.CXFDemoImpl" address="/cxfdemo" />
+
+       <bean id="cxfrs" class="com.nie.cxf.outinterface.CXFServiceImpl"/>
+
+       <jaxrs:server id="serverContainer">
+              <jaxrs:serviceBeans>
+                     <ref bean="cxfrs"/>
+              </jaxrs:serviceBeans>
+       </jaxrs:server>
+
+       <bean id="restid" class="com.nie.cxf.outinterface.CXFServiceImpl"/>
+
+       <jaxrs:server address="/cfxsvr">
+              <jaxrs:serviceBeans>
+                     <ref bean="restid"/>
+              </jaxrs:serviceBeans>
+              <jaxrs:providers>
+                     <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+              </jaxrs:providers>
+       </jaxrs:server>
+</beans>
