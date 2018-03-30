@@ -1,12 +1,18 @@
 package org.rocketmq.test;
 
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.rocketmq.client.consumer.DefaultMQPullConsumer;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.PullResult;
+import org.apache.rocketmq.client.consumer.PullStatus;
 import org.apache.rocketmq.client.consumer.listener.*;
+import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
+import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +21,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -34,8 +41,17 @@ public class TConsumer {
                 System.setProperty(key, p.getProperty(key));
             }
         }
-        DOMConfigurator.configure("src/main/resources/log4j2-cus.xml");
-        nomalConsumer();
+//        DOMConfigurator.configure("src/main/resources/log4j2-cus.xml");
+//        nomalConsumer();
+        try {
+            fetchMessage();
+        } catch (RemotingException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (MQBrokerException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void nomalConsumer() throws MQClientException {
@@ -108,5 +124,30 @@ public class TConsumer {
         });
         consumer.start();
         System.out.printf("Consumer Started.%n");
+    }
+
+    /**
+     * 消费端拉取信息.
+     *
+     * @throws MQClientException
+     * @throws RemotingException
+     * @throws InterruptedException
+     * @throws MQBrokerException
+     */
+    public static void fetchMessage() throws MQClientException, RemotingException, InterruptedException, MQBrokerException {
+        DefaultMQPullConsumer consumer = new DefaultMQPullConsumer("example_group_name");
+        consumer.setNamesrvAddr("localhost:9876");
+        consumer.setVipChannelEnabled(false);
+        consumer.start();
+        Set<MessageQueue> queues = consumer.fetchSubscribeMessageQueues("TestTopic");
+        for(MessageQueue queue: queues){
+            PullResult temp = consumer.pull(queue, null, 0, Integer.MAX_VALUE);
+            if(temp.getPullStatus().equals(PullStatus.FOUND)){
+                List<MessageExt> msgs = temp.getMsgFoundList();
+                for (MessageExt msg: msgs){
+                    System.out.println(msg);
+                }
+            }
+        };
     }
 }
