@@ -27,3 +27,5 @@ The agents talk to one or more Consul servers. The Consul servers are where data
 Components of your infrastructure that need to discover other services or nodes can query any of the Consul servers or any of the Consul agents. The agents forward queries to the servers automatically.
 
 Each datacenter runs a cluster of Consul servers. When a cross-datacenter service discovery or configuration request is made, the local Consul servers forward the request to the remote datacenter and return the result.
+
+Service discovery and configuration made easy. Distributed, highly available, and datacenter-aware.
