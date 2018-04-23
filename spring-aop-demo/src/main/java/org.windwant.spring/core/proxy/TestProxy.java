@@ -23,9 +23,9 @@ public class TestProxy extends TestCase {
     }
 
     public void testName() throws Exception {
-//        MyJDKProxy mp = new MyJDKProxy();
-//        Performer ap = (Performer) mp.getInstance(new APerformer());
-//        System.out.println(ap.perform("fadfasd"));
+        MyJDKProxy mp = new MyJDKProxy();
+        Performer ap = (Performer) mp.getInstance(new APerformer());
+        System.out.println(ap.perform("fadfasd"));
 
         MyCGLIBProxy p = new MyCGLIBProxy();
         Performer pp = (Performer) p.getProxy(APerformer.class);
