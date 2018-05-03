@@ -21,7 +21,7 @@ public class NIOOpt {
 
     public static void main(String[] args) {
         try {
-            MappedPrivateChannel();
+            fileChannel();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,7 +108,7 @@ public class NIOOpt {
 
     // Show the current content of the three buffers
     public static void showBuffers (ByteBuffer ro, ByteBuffer rw, ByteBuffer cow) throws Exception{
-        dumpBuffer ("R/O", ro);
+        dumpBuffer("R/O", ro);
         dumpBuffer ("R/W", rw);
         dumpBuffer ("COW", cow);
         System.out.println ("");
@@ -279,21 +279,33 @@ public class NIOOpt {
 
     /**
      * FileChannel文件读取
+     * 处理存在汉字读取情况，根据回车换行符，每次显示一行数据
      */
     public static void fileChannel(){
         try {
-            RandomAccessFile afile = new RandomAccessFile("hello.txt", "rw");
+            RandomAccessFile afile = new RandomAccessFile("nio-demo\\hello.txt", "rw");
             FileChannel fc = afile.getChannel();
             ByteBuffer bb = ByteBuffer.allocate(48);
+            ByteBuffer temp = ByteBuffer.allocate(100);
             int byteRead;
             while ((byteRead = fc.read(bb)) != -1){//确保读完
                 System.out.println("read:" + byteRead);
                 bb.flip();//翻转为读状态
                 while (bb.hasRemaining()){//直到没有可读的字节
-                    System.out.println(String.valueOf(bb.get()));
+                    byte bit = bb.get();
+                    temp.put(bit);
+                    if(bit == 10 || bit == 13){
+                        temp.flip();
+                        //输出每一行读取内容
+                        System.out.println(new String(temp.array(), 0, temp.limit() - 1, "UTF-8"));
+                        temp.clear();
+                    }
                 }
                 bb.clear();
             }
+            //输出最后一行读取内容
+            temp.flip();
+            System.out.println(new String(temp.array(), 0, temp.limit() - 1, "UTF-8"));
             fc.close();
             afile.close();
         } catch (FileNotFoundException e) {
