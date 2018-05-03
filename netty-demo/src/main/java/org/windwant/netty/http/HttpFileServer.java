@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 /**
  * HttpFileServer 文件服务器，文件目录及下载
- * 测试请求：http://localhost:8888/src/
+ * 测试请求：http://localhost:8888/netty-demo/src/
  */
 public class HttpFileServer {
 
@@ -41,7 +41,7 @@ public class HttpFileServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
 //                            ch.pipeline().addLast("http-decoder", new HttpRequestDecoder());
                             ch.pipeline().addLast("http-codec", new HttpServerCodec()); //A combination of {@link HttpRequestDecoder} and {@link HttpResponseEncoder}
-                            ch.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
+                            ch.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));  //deal chunked message
 //                            ch.pipeline().addLast("http-encoder", new HttpResponseEncoder());
                             ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
                             ch.pipeline().addLast("httpFileServerHandler", new HttpFileServerHandler(url));
@@ -59,7 +59,7 @@ public class HttpFileServer {
     }
 
     public static void main(String[] args) {
-        new HttpFileServer().run(8888, "/src/");
+        new HttpFileServer().run(8888, "/netty-demo/src/");
     }
 }
 
@@ -81,6 +81,7 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         }
         System.out.println("decoded result: " + msg.getDecoderResult().isSuccess());
 
+        //supported method GET
         if(msg.getMethod() != HttpMethod.GET){
             sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
             return;
@@ -88,7 +89,7 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 
         System.out.println("request method: " + msg.getMethod());
 
-        final String path = sanilizeUrl(msg.getUri());
+        final String path = dealUrl(msg.getUri());
         if(path == null){
             sendError(ctx, HttpResponseStatus.FORBIDDEN);
             return;
@@ -104,15 +105,16 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         }
 
         if(file.isDirectory()){
-            if(msg.getUri().endsWith("/")){
+            if(msg.getUri().endsWith("/")){//访问文件夹，返回文件夹下文件列表
                 sendListing(ctx, file);
-            }else{
+            }else{//访问文件 返回重定向response
                 sendRedirect(ctx, msg.getUri() + "/");
                 System.out.println("request redirect: " + msg.getUri() + "/");
             }
             return;
         }
 
+        //进入文件下载处理
         if(!file.isFile()){
             sendError(ctx, HttpResponseStatus.FORBIDDEN);
             return;
@@ -128,14 +130,16 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 
         long fl = randomAccessFile.length();
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
-        response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, fl);
+        response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, fl); //CONTENT_LENGTH
         setContentTypeHeader(response, file);
         if(HttpHeaders.isKeepAlive(msg)){ //下载文件必须设置
             response.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
         }
         ctx.write(response);
         ChannelFuture sendFuture = null;
+        //发送文件  ChunkedInput that fetches data from a file chunk by chunk
         sendFuture = ctx.write(new ChunkedFile(randomAccessFile, 0, fl, 8192), ctx.newProgressivePromise());
+        //发送进度监听
         sendFuture.addListener(new ChannelProgressiveFutureListener(){
 
             public void operationComplete(ChannelProgressiveFuture future) throws Exception {
@@ -164,7 +168,12 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 
     private static final Pattern INSECURE_URL = Pattern.compile(".*[<>&\"].*");
 
-    private String sanilizeUrl(String uri){
+    /**
+     * 处理访问路径
+     * @param uri
+     * @return
+     */
+    private String dealUrl(String uri){
         try {
             uri = URLDecoder.decode(uri, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -193,6 +202,11 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 
     private static final Pattern ALLOWED_FILE_PATTERN = Pattern.compile("[A-Za-z0-9][-_A-Za-z0-9\\.]*]");
 
+    /**
+     * 文件列表page
+     * @param ctx
+     * @param dir
+     */
     private void sendListing(ChannelHandlerContext ctx, File dir){
         System.out.println("make file list...");
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
@@ -234,6 +248,11 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         System.out.println("make over");
     }
 
+    /**
+     * 重定向
+     * @param ctx
+     * @param newUrl
+     */
     private static void sendRedirect(ChannelHandlerContext ctx, String newUrl){
         FullHttpResponse response =  new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.FOUND);
         response.headers().set(HttpHeaders.Names.LOCATION, newUrl);
@@ -248,7 +267,7 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
     }
 
     private static void setContentTypeHeader(HttpResponse response, File file){
-        MimetypesFileTypeMap mfm = new MimetypesFileTypeMap();
+        MimetypesFileTypeMap mfm = new MimetypesFileTypeMap(); //获取文件类型 mime type 工具
         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, mfm.getContentType(file));
     }
 }
