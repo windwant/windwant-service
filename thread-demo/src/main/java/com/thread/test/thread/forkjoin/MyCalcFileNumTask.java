@@ -5,23 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
-public class MyTask extends RecursiveTask<Integer>{
+public class MyCalcFileNumTask extends RecursiveTask<Integer>{
 
     public Integer num = 0;
 
     private File file;
-    public MyTask(File file){
+    public MyCalcFileNumTask(File file){
         this.file = file;
     }
 
     @Override
     protected Integer compute() {
-        List<MyTask> taskList = new ArrayList<MyTask>();
+        List<MyCalcFileNumTask> taskList = new ArrayList<MyCalcFileNumTask>();
         if(file.isDirectory()){
             File[] list = file.listFiles();
             for(File subf: list){
                 if(subf.isDirectory()){
-                    MyTask mt = new MyTask(subf);
+                    MyCalcFileNumTask mt = new MyCalcFileNumTask(subf);
                     taskList.add(mt);
                 }else{
                     num++;
@@ -34,14 +34,14 @@ public class MyTask extends RecursiveTask<Integer>{
 
         if(!taskList.isEmpty()){
             //同下
-//            for(MyTask mtask: taskList){
+//            for(MyCalcFileNumTask mtask: taskList){
 //                mtask.fork();//
 //            }
-//            for(MyTask mtask: taskList){
+//            for(MyCalcFileNumTask mtask: taskList){
 //                num += mtask.join();
 //            }
 
-            for(MyTask mtask: invokeAll(taskList)){ //invokeAll() 返回ForkJoinTask集合 fork() 把任务加入workqueue
+            for(MyCalcFileNumTask mtask: invokeAll(taskList)){ //invokeAll() 返回ForkJoinTask集合 fork() 把任务加入workqueue
                 num += mtask.join();
             }
         }
