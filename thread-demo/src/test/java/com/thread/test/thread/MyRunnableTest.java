@@ -1,5 +1,6 @@
 package com.thread.test.thread;
 
+import com.thread.test.thread.synchronizedsth.MySynMethod;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -33,7 +34,7 @@ public class MyRunnableTest
      */
     public void testApp()
     {
-        MyRunnableSyn mr = new MyRunnableSyn();
+        MySynMethod mr = new MySynMethod();
         new Thread(mr).start();
         new Thread(mr).start();
         new Thread(mr).start();
