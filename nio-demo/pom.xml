@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.windwant.nio</groupId>
-  <artifactId>nio-test</artifactId>
+  <artifactId>nio-demo</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>nio-test</name>
+  <name>nio-demo</name>
   <url>http://maven.apache.org</url>
 
   <properties>
