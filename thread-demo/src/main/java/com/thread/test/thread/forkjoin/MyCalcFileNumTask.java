@@ -45,7 +45,7 @@ public class MyCalcFileNumTask extends RecursiveTask<Integer>{
 //            }
 
             for(MyCalcFileNumTask mtask: invokeAll(taskList)){ //invokeAll() 返回ForkJoinTask集合 fork() 把任务加入workqueue
-                num += mtask.join();
+                num += mtask.join();//区别于 get()，处理了异常
             }
         }
         return num;
