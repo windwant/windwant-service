@@ -2,6 +2,7 @@ package com.thread.test.thread.forkjoin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -9,25 +10,42 @@ import java.util.concurrent.ForkJoinPool;
  * RecursiveTask 带返回值的ForkJoinTask
  * RecursiveAction 不带返回值的ForkJoinTask
  *
- * 统计路径下文件个数
  * Created by windwant on 2016/6/3.
  */
 public class MyForkJoin {
 
     public static void main(String[] args) {
-        testListFileNum();
+        testCalcAndListFileNum();
     }
 
+    /**
+     * 统计文件数量
+     */
     public static void testCalcFileNum(){
         MyCalcFileNumTask task = new MyCalcFileNumTask(new File("D:\\MPS"));
         Integer sum = new ForkJoinPool().invoke(task);
         System.out.println(sum);
     }
 
+    /**
+     * 列显
+     */
     public static void testListFileNum(){
-        MyListFileNumTask task = new MyListFileNumTask(new File("D:\\MPS"));
+        MyListFileTask task = new MyListFileTask(new File("D:\\MPS"));
         List<String> files = new ForkJoinPool().invoke(task);
-        files.stream().forEach(file-> System.out.println(file));
+        files.stream().forEach(file -> System.out.println(file));
+    }
+
+    /**
+     * 按类型 列显
+     */
+    public static void testCalcAndListFileNum(){
+        MyCalcAndListFileTask task = new MyCalcAndListFileTask(new File("D:\\MPS"));
+        Map<String, List<String>> files = new ForkJoinPool().invoke(task);
+        files.keySet().stream().forEach(item-> {
+            System.out.println("type: " + item);
+            files.get(item).stream().forEach(file-> System.out.println(file));
+        });
     }
 }
 

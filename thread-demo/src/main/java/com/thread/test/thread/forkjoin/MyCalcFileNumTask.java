@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+/**
+ * 统计文件数量
+ */
 public class MyCalcFileNumTask extends RecursiveTask<Integer>{
 
     public Integer num = 0;
