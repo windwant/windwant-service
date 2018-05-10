@@ -13,8 +13,8 @@ import java.util.List;
 public class LogAppend {
 
     public static void main(String[] args) throws IOException {
-        File file = new File("C:\\Users\\aayongche\\Desktop\\100x1000");
-        FileWriter fw = new FileWriter("C:\\Users\\aayongche\\Desktop\\n\\result100000.log");
+        File file = new File("C:\\Users\\xxx\\Desktop\\100x1000");
+        FileWriter fw = new FileWriter("C:\\Users\\xxx\\Desktop\\n\\result100000.log");
         File[] list = file.listFiles();
         for (int i = 0; i < list.length; i++) {
             FileReader temp = new FileReader(list[i]);
