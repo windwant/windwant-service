@@ -11,7 +11,7 @@
 
     <modules>
         <module>aio-demo</module>
-        <module>thread-demo</module>
+        <module>concurrent-demo</module>
         <module>spring-oxm-demo</module>
         <module>httpserver-demo</module>
         <module>nativemethod-demo</module>
