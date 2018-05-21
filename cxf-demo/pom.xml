@@ -33,6 +33,7 @@
       <artifactId>jackson-jaxrs-json-provider</artifactId>
       <version>${jackson.version}</version>
     </dependency>
+
   </dependencies>
   <build>
     <finalName>cxf</finalName>

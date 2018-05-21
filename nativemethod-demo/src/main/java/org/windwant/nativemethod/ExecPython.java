@@ -54,6 +54,6 @@ public class ExecPython {
     }
 
     public static void main(String[] args) {
-        execPyScriptFile();
+        execPyScript();
     }
 }

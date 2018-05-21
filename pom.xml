@@ -26,6 +26,7 @@
         <module>consul-demo</module>
         <module>cxf-demo</module>
         <module>spring-aop-demo</module>
+        <module>java-design-pattern-demo</module>
     </modules>
 
 </project>
