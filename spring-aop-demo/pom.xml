@@ -98,11 +98,11 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-web</artifactId>
-      <version>2.0.4</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>net.sf.ehcache</groupId>-->
+      <!--<artifactId>ehcache-web</artifactId>-->
+      <!--<version>2.0.4</version>-->
+    <!--</dependency>-->
     <!-- http://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
