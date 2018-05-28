@@ -1,4 +1,4 @@
-package org.windwant.aio;
+package org.windwant.io.aio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

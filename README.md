@@ -1,6 +1,6 @@
 # windwant-demo
 
-JAVA IO 异步非阻塞应用实例
+JAVA NIO 异步非阻塞应用实例
 
 http server
 
