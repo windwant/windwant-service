@@ -1,5 +1,8 @@
 package org.windwant.io.io;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -19,7 +22,8 @@ public class DataInputOutputStream {
      */
     public static void readTypes() throws IOException {
         String textFile = "io-demo/s.dat";
-        DataOutputStream out = new DataOutputStream(new FileOutputStream(textFile));
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(bout);//new FileOutputStream(textFile));
         out.writeShort(1);//写入内容
         out.writeInt(2);
         out.writeDouble(3);
@@ -29,7 +33,7 @@ public class DataInputOutputStream {
         out.write(textFile.getBytes());
         out.flush();
         out.close();
-        DataInputStream di = new DataInputStream(new FileInputStream(textFile));
+        DataInputStream di = new DataInputStream(new ByteArrayInputStream(bout.toByteArray()));//new FileInputStream(textFile));
         System.out.println(di.readShort());
         System.out.println(di.readInt());
         System.out.println(di.readDouble());
@@ -40,6 +44,7 @@ public class DataInputOutputStream {
         while ((di.read(b)) != -1){}
         System.out.print(new String(b, Charset.defaultCharset()));
         di.close();
+        bout.close();
     }
 
 
