@@ -190,12 +190,12 @@ public class ZipStream extends FileStream{
                 new File(tempFilePath).mkdir();
             }else{
                 //文件复制
-                RandomAccessFile file = new RandomAccessFile(basePath + "/" + entry.getName(), "rw");
-                int i = 0;
+                BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(basePath + "/" + entry.getName()));
+                int i;
                 while ((i = in.read(bytes)) != -1){
-                    file.getChannel().write(ByteBuffer.wrap(bytes, 0, i));
+                    bout.write(bytes, 0, i);
                 }
-                file.close();
+                bout.close();
             }
             entry = in.getNextEntry();
             num++;
