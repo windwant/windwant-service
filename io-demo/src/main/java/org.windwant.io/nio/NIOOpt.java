@@ -21,7 +21,9 @@ public class NIOOpt {
 
     public static void main(String[] args) {
         try {
-            fileChannel();
+            fileTransfer("F:\\s.zip", "F:\\s1.zip");
+            fileTransferByNormal("F:\\s.zip", "F:\\s2.zip");
+            fileCopyByMappedByteBuffer("F:\\s.zip", "F:\\s3.zip");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,7 +31,7 @@ public class NIOOpt {
 
     /**
      * MapMode.PRIVATE 写时拷贝（copy-on-write）映射：通过put()修改的任何修改，会导致产生一个私有的数据
-     * 拷贝，宝贝中的数据只有MappedByteBuffer实例可以看到。不会对底层文件做任何修改。若缓冲区被回收，修改丢
+     * 拷贝，拷贝中的数据只有MappedByteBuffer实例可以看到。不会对底层文件做任何修改。若缓冲区被回收，修改丢
      * 失，read/write方式建立通道。
      * 做修改，拷贝副本前，其它方式的映射区的修改，会反映到当前区域。映射相互的修改不可见
      * 允许父子进程共享内存页
@@ -115,7 +117,7 @@ public class NIOOpt {
     }
     // Dump buffer content, counting and skipping nulls
     public static void dumpBuffer (String prefix, ByteBuffer buffer) throws Exception {
-        System.out.print (prefix + ": '");
+        System.out.print(prefix + ": '");
         int nulls = 0;
         int limit = buffer.limit( );
         for (int i = 0; i < limit; i++) {
@@ -234,30 +236,28 @@ public class NIOOpt {
      * 直接读取，修改磁盘上的文件。
      * 自动缓存内存页，比较高效。
      */
-    public static void mappedFileChannel(){
+    public static void mappedFileChannel(String source, String destination){
         RandomAccessFile afile = null;
         RandomAccessFile bfile = null;
         FileChannel fc = null;
         FileChannel fcb = null;
         ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
         try {
-            afile = new RandomAccessFile("hello.txt", "rw");
+            afile = new RandomAccessFile(source, "rw");
             readWriteLock.readLock().lock();
             fc = afile.getChannel();
             long length = fc.size();
             MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_WRITE, 0, length);
             byte[] fbo = new byte[(int) length];
             mbb.get(fbo);
-            System.out.println(new String(fbo));
+//            System.out.println(new String(fbo));
             readWriteLock.readLock().unlock();
-            bfile = new RandomAccessFile("hehe.txt", "rw");
+            bfile = new RandomAccessFile(destination, "rw");
             readWriteLock.writeLock().lock();
             fcb = bfile.getChannel();
             MappedByteBuffer mbbb = fcb.map(FileChannel.MapMode.READ_WRITE, 0, length);
 
-            for (int i = 0; i < length; i++) {
-                mbbb.put(i, fbo[i]);
-            }
+            mbbb.put(fbo, 0, (int) length);
             mbbb.flip();
             mbbb.force();
             readWriteLock.writeLock().unlock();
@@ -315,29 +315,6 @@ public class NIOOpt {
         }
     }
 
-    /**
-     * 基于FileChannel transferTo transferFrom 方法文件复制
-     */
-    public static void fileTransfer(){
-        try {
-            RandomAccessFile afile = new RandomAccessFile("hello.txt", "rw");
-            RandomAccessFile bfile = new RandomAccessFile("hehe.txt", "rw");
-            FileChannel ac = afile.getChannel();
-            FileChannel bc = bfile.getChannel();
-            long position = 0;
-            long count = ac.size();
-//            bc.transferFrom(ac, position, count);
-            ac.transferTo(position, count, bc);
-            ac.close();
-            afile.close();
-            bc.close();
-            bfile.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void fileSelector(){
         try {
@@ -352,12 +329,41 @@ public class NIOOpt {
     }
 
     /**
+     *
+     * 基于FileChannel transferTo transferFrom 方法文件复制
+     */
+    public static void fileTransfer(String source, String destination){
+        try {
+            long cur = System.currentTimeMillis();
+            RandomAccessFile afile = new RandomAccessFile(source, "rw");
+            RandomAccessFile bfile = new RandomAccessFile(destination, "rw");
+            FileChannel ac = afile.getChannel();
+            FileChannel bc = bfile.getChannel();
+            long position = 0;
+            long count = ac.size();
+//            bc.transferFrom(ac, position, count);
+            ac.transferTo(position, count, bc);
+            ac.close();
+            afile.close();
+            bc.close();
+            bfile.close();
+            System.out.println("transfer execute: " + (System.currentTimeMillis() - cur));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * DirectByteBuffer 文件复制
      * 基于基本channel buffer的文件复制操作
      */
-    public static void fileTransferByNormal() {
+    public static void fileTransferByNormal(String source, String destination) {
         try {
-            RandomAccessFile afile = new RandomAccessFile("hello.txt", "rw");
-            RandomAccessFile bfile = new RandomAccessFile("hehe.txt", "rw");
+            long cur = System.currentTimeMillis();
+            RandomAccessFile afile = new RandomAccessFile(source, "rw");
+            RandomAccessFile bfile = new RandomAccessFile(destination, "rw");
             FileChannel ac = afile.getChannel();
             FileChannel bc = bfile.getChannel();
 
@@ -373,10 +379,55 @@ public class NIOOpt {
             afile.close();
             bc.close();
             bfile.close();
+            System.out.println("channel execute: " + (System.currentTimeMillis() - cur));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * MappedByteBuffer文件复制
+     * @param source
+     * @param destination
+     */
+    public static void fileCopyByMappedByteBuffer(String source, String destination){
+        long cur = System.currentTimeMillis();
+        RandomAccessFile afile = null;
+        RandomAccessFile bfile = null;
+        FileChannel fc = null;
+        FileChannel fcb = null;
+        try {
+            afile = new RandomAccessFile(source, "rw");
+            bfile = new RandomAccessFile(destination, "rw");
+            fc = afile.getChannel();
+            fcb = bfile.getChannel();
+            long length = fc.size();
+            MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_WRITE, 0, length);
+            MappedByteBuffer mbbb = fcb.map(FileChannel.MapMode.READ_WRITE, 0, length);
+            int i = 0;
+            byte[] tmp = new byte[1024];
+            while (mbb.hasRemaining()){
+                int index = mbb.remaining() > 1024?1024:mbb.remaining();
+                mbb.get(tmp, 0, index);
+                mbbb.put(tmp, 0, index);
+            }
+//            mbbb.force();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                fc.close();
+                fcb.close();
+                afile.close();
+                bfile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("MappedByteBuffer execute: " + (System.currentTimeMillis() - cur));
     }
 }
