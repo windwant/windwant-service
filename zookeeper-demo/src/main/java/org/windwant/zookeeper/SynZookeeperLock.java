@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 public class SynZookeeperLock {
     private static final int SESSION_TIMEOUT = 30000;
 
-    public static ZooKeeper getInstance(String domain, Watcher w){
+    public static ZooKeeper getInstance(String domain){
         try {
             CountDownLatch c = new CountDownLatch(1);
             ZooKeeper zk = new ZooKeeper(domain, SESSION_TIMEOUT, new Watcher() {
@@ -43,7 +43,7 @@ public class SynZookeeperLock {
      */
     public static void tryLock(String domain, String path, byte[] data, CountDownLatch c){
         //每次获取锁使用新的会话连接
-        ZooKeeper zk = getInstance(domain, null);
+        ZooKeeper zk = getInstance(domain);
         zk.create(path, data, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL, (rc, path1, ctx, name) -> {
             //节点创建成功，获取锁
             if (rc == 0) {
