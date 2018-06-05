@@ -3,6 +3,7 @@ package org.windwant.zookeeper;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.ZooDefs.Ids;
 
+import java.io.IOException;
 import java.util.concurrent.*;
 
 /**
@@ -11,6 +12,27 @@ import java.util.concurrent.*;
 public class SynZookeeperLock {
     private static final int SESSION_TIMEOUT = 30000;
 
+    public static ZooKeeper getInstance(String domain, Watcher w){
+        try {
+            CountDownLatch c = new CountDownLatch(1);
+            ZooKeeper zk = new ZooKeeper(domain, SESSION_TIMEOUT, new Watcher() {
+                @Override
+                public void process(WatchedEvent event) {
+                    if (event.getState() == Watcher.Event.KeeperState.SyncConnected) {
+                        c.countDown(); // 唤醒当前正在执行的线程
+                    }
+                }
+            });
+            //阻塞直到连接完成
+            c.await();
+            return zk;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /**
      * 获取分布式锁
      * 使用临时节点，避免进程获取锁后，down掉未释放锁问题
@@ -21,7 +43,7 @@ public class SynZookeeperLock {
      */
     public static void tryLock(String domain, String path, byte[] data, CountDownLatch c){
         //每次获取锁使用新的会话连接
-        ZooKeeper zk = ZookeeperUtil.getInstance(domain, null);
+        ZooKeeper zk = getInstance(domain, null);
         zk.create(path, data, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL, (rc, path1, ctx, name) -> {
             //节点创建成功，获取锁
             if (rc == 0) {
