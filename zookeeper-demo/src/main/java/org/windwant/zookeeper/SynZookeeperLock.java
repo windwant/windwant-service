@@ -66,7 +66,7 @@ public class SynZookeeperLock {
             } else if(rc == -110) {//节点已存在，则说明锁已被其它进程获取，则创建watch，并阻塞等待
                 System.out.println(Thread.currentThread().getName() + "：result " + rc + " lock " + path + " already created, waiting!");
                 try {
-                    zk.getChildren(path, event -> {
+                    zk.exists(path, event -> {
                         //watch 到锁删除事件，则触发重新获取锁
                         if (event.getType().equals(Watcher.Event.EventType.NodeDeleted)) {
                             System.out.println(Thread.currentThread().getName() + "：get node deleted event! try lock!");
