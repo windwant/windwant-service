@@ -3,6 +3,7 @@ package org.windwant.zookeeper;
 import org.apache.zookeeper.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SyncPrimitive implements Watcher {
@@ -40,15 +41,12 @@ public class SyncPrimitive implements Watcher {
                     if (zk.exists(root, false) != null) {
                         List<String> child = zk.getChildren(root, false);
                         if (child != null && !child.isEmpty()) {
+                            //zookeeper multi操作；或者 Transaction（multi封装） commit操作；
+                            List<Op> ops = new ArrayList<>();
                             child.forEach(c -> {
-                                try {
-                                    zk.delete(root + "/" + c, -1);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (KeeperException e) {
-                                    e.printStackTrace();
-                                }
+                                ops.add(Op.delete(root + "/" + c, -1));
                             });
+                            List<OpResult> opRsts = zk.multi(ops);
                             System.out.println(Thread.currentThread().getName() + ": deleted child node success!");
                         }
                         zk.setData(root, String.valueOf(0).getBytes(), -1);
