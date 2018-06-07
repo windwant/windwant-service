@@ -47,7 +47,6 @@ public class SyncPrimitiveBarrierTest
             System.out.println("Entered barrier: " + flag);
             if(!flag) System.out.println("Error when entering the barrier");
 
-
             Thread.sleep(5000);
             syncPrimitiveBarrier.leave();
             System.out.println("Left barrier");

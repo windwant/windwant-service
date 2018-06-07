@@ -25,8 +25,8 @@ public class SyncPrimitiveBarrier extends SyncPrimitive {
      * @param root
      * @param size
      */
-    public SyncPrimitiveBarrier(String domain, String root, int size) {
-        super();
+    public SyncPrimitiveBarrier(String domain, String root, Integer size) {
+        super(size);
         this.root = root;
         this.size = size;
 
@@ -50,23 +50,25 @@ public class SyncPrimitiveBarrier extends SyncPrimitive {
      * @throws InterruptedException
      */
 
-    synchronized boolean enter() throws KeeperException, InterruptedException{
-        List<String> list = zk.getChildren(root, true);
-        //当前节点数小于阈值，则创建节点，进入barrier
-        if (list.size() < size) {
-            System.out.println("node: " + list.size());
-            this.name = zk.create(root + "/" + name, new byte[0], Ids.OPEN_ACL_UNSAFE,
-                    CreateMode.EPHEMERAL_SEQUENTIAL);
-            if(list.size() + 1 == size){
-                System.out.println("set data node size" + list.size());
-                zk.setData(root, String.valueOf(list.size() + 1).getBytes(), -1);
+    boolean enter() throws KeeperException, InterruptedException{
+        synchronized (mutex) {
+            List<String> list = zk.getChildren(root, true);
+            //当前节点数小于阈值，则创建节点，进入barrier
+            if (list.size() < size) {
+                System.out.println("node: " + list.size());
+                this.name = zk.create(root + "/" + name, new byte[0], Ids.OPEN_ACL_UNSAFE,
+                        CreateMode.EPHEMERAL_SEQUENTIAL);
+                if (list.size() + 1 == size) {
+                    System.out.println("set data node size" + list.size());
+                    zk.setData(root, String.valueOf(list.size() + 1).getBytes(), -1);
+                }
+                System.out.println(Thread.currentThread().getName() + ": " + name + " enter barrier!");
+                return true;
+            } else {
+                //否则不进入
+                System.out.println(Thread.currentThread().getName() + ": " + name + " barrier full, inaccessible!");
+                return false;
             }
-            System.out.println(Thread.currentThread().getName() + ": " + name + " enter barrier!");
-            return true;
-        }else {
-            //否则不进入
-            System.out.println(Thread.currentThread().getName() + ": " + name + " barrier full, inaccessible!");
-            return false;
         }
     }
 

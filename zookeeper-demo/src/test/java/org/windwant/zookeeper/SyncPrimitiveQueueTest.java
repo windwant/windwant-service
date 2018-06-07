@@ -34,7 +34,7 @@ public class SyncPrimitiveQueueTest
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        syncPrimitiveQueue = new SyncPrimitiveQueue("192.168.7.162", "/pnode");
+        syncPrimitiveQueue = new SyncPrimitiveQueue("192.168.7.162", "/pnode", 10);
     }
 
     /**

@@ -7,11 +7,11 @@ import java.util.List;
 
 public class SyncPrimitive implements Watcher {
 
-    public ZooKeeper zk = null;
-    public Integer mutex;
+    protected ZooKeeper zk = null;
+    protected Integer mutex;
 
-    SyncPrimitive() {
-        mutex = new Integer(-1);
+    SyncPrimitive(Integer mutex) {
+        this.mutex = mutex;
     }
 
     /**
@@ -32,34 +32,38 @@ public class SyncPrimitive implements Watcher {
      * 初始化应用根节点 并发处理
      * @param root
      */
-    protected synchronized void initZKRootNode(String root){
-        try {
-            if(zk != null) {
-                if (zk.exists(root, false) != null) {
-                    List<String> child = zk.getChildren(root, false);
-                    if (child != null && !child.isEmpty()) {
-                        child.forEach(c -> {
-                            try {
-                                zk.delete(root + "/" + c, -1);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (KeeperException e) {
-                                e.printStackTrace();
-                            }
-                        });
+    protected void initZKRootNode(String root){
+        //并发控制
+        synchronized (mutex) {
+            try {
+                if (zk != null) {
+                    if (zk.exists(root, false) != null) {
+                        List<String> child = zk.getChildren(root, false);
+                        if (child != null && !child.isEmpty()) {
+                            child.forEach(c -> {
+                                try {
+                                    zk.delete(root + "/" + c, -1);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (KeeperException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            System.out.println(Thread.currentThread().getName() + ": deleted child node success!");
+                        }
+                        zk.setData(root, String.valueOf(0).getBytes(), -1);
+                        System.out.println(Thread.currentThread().getName() + ": app root node " + root + " init success! ");
+                    } else {
+                        zk.create(root, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+                                CreateMode.PERSISTENT);
+                        System.out.println(Thread.currentThread().getName() + ": app root node " + root + " create success! ");
                     }
-                    zk.setData(root, String.valueOf(0).getBytes(), -1);
-                    System.out.println(Thread.currentThread().getName() + ": app root node " + root + " init success! ");
-                }else {
-                    zk.create(root, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                            CreateMode.PERSISTENT);
-                    System.out.println(Thread.currentThread().getName() + ": app root node " + root + " create success! ");
                 }
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } catch (KeeperException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

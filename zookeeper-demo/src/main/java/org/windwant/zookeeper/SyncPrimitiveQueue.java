@@ -14,7 +14,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class SyncPrimitiveQueue extends SyncPrimitive {
 
-    String root;
+    private String root;
+    private int queueSize;
 
     /**
      * Constructor of producer-consumer queue
@@ -23,9 +24,10 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
      * @param name
      */
 
-    SyncPrimitiveQueue(String domain, String name) {
-        super();
+    SyncPrimitiveQueue(String domain, String name, Integer queueSize) {
+        super(queueSize);
         this.root = name;
+        this.queueSize = queueSize;
         initZK(domain);
         initZKRootNode(root);
     }
@@ -37,19 +39,24 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
      * @return
      */
 
-    boolean produce(int i) throws KeeperException, InterruptedException{
-        ByteBuffer b = ByteBuffer.allocate(4);
-        byte[] value;
+    public boolean produce(int i) throws KeeperException, InterruptedException{
+        synchronized (mutex) {
+            List<String> children = zk.getChildren(root, false);
+            if(children != null && children.size()>=mutex){
+                System.out.println(Thread.currentThread().getName() + ": producer queue full, waiting for consuming");
+                mutex.wait();
+            }
+            ByteBuffer b = ByteBuffer.allocate(4);
+            byte[] value;
 
-        b.putInt(i);
-        value = b.array();
-        String node = zk.create(root + "/element", value, Ids.OPEN_ACL_UNSAFE,
-                CreateMode.PERSISTENT_SEQUENTIAL);
-        System.out.println(Thread.currentThread().getName() + ": produce value: " + node);
-        synchronized (mutex){
+            b.putInt(i);
+            value = b.array();
+            String node = zk.create(root + "/element", value, Ids.OPEN_ACL_UNSAFE,
+                    CreateMode.PERSISTENT_SEQUENTIAL);
+            System.out.println(Thread.currentThread().getName() + ": produce value: " + node);
             mutex.notifyAll();//通知消费
+            return true;
         }
-        return true;
     }
 
 
@@ -80,7 +87,7 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
                     zk.delete(root + "/" + dest, 0); //消费后删除
                     ByteBuffer buffer = ByteBuffer.wrap(b);
                     retvalue = buffer.getInt();
-
+                    mutex.notifyAll();
                     return retvalue;
                 }
             }
@@ -88,13 +95,13 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
     }
 
     public static void main(String[] args) {
-        SyncPrimitiveQueue syncPrimitiveQueue = new SyncPrimitiveQueue("localhost:2181", "/queue_test");
+        SyncPrimitiveQueue syncPrimitiveQueue = new SyncPrimitiveQueue("localhost:2181", "/queue_test", 10);
         //生产 每隔三秒 模拟慢生产
         new Thread(() -> {
             for (int i = 0; i < Integer.MAX_VALUE; i++) {
                 try {
                     syncPrimitiveQueue.produce(i);
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(1, 3)*1000);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(0, 3)*1000);
                 } catch (KeeperException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -114,7 +121,7 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
             for (int i = 0; i < Integer.MAX_VALUE ; i++) {
                 try {
                     syncPrimitiveQueue.consume();
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(1, 3)*1000);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(0, 3)*1000);
                 } catch (KeeperException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
