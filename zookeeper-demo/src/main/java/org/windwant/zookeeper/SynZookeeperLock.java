@@ -60,9 +60,10 @@ public class SynZookeeperLock {
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }finally {
+                    //释放等待
+                    c.countDown();
                 }
-                //释放等待
-                c.countDown();
             } else if(rc == -110) {//节点已存在，则说明锁已被其它进程获取，则创建watch，并阻塞等待
                 System.out.println(Thread.currentThread().getName() + "：result " + rc + " lock " + path + " already created, waiting!");
                 try {
@@ -81,9 +82,13 @@ public class SynZookeeperLock {
                         }
                     });
                 } catch (KeeperException e) {
+                    //包括ConnectionLossException（网络，服务器故障） 需要确认客户端重连执行情况 之前的请求是否需要重新执行
                     e.printStackTrace();
+                    c.countDown();
                 } catch (InterruptedException e) {
+                    //线程中断，打断请求
                     e.printStackTrace();
+                    c.countDown();
                 }
             }else {
                 //-4 -112
@@ -97,6 +102,8 @@ public class SynZookeeperLock {
             c.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            c.countDown();
         }
     }
 

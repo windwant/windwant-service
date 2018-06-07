@@ -7,6 +7,8 @@ import org.apache.zookeeper.data.Stat;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Producer-Consumer queue
  */
@@ -17,29 +19,15 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
     /**
      * Constructor of producer-consumer queue
      *
-     * @param address
+     * @param domain
      * @param name
      */
 
-    SyncPrimitiveQueue(String address, String name) {
-        super(address);
+    SyncPrimitiveQueue(String domain, String name) {
+        super();
         this.root = name;
-        // Create ZK node name
-        if (zk != null) {
-            try {
-                Stat s = zk.exists(root, false);
-                if (s == null) {
-                    zk.create(root, new byte[0], Ids.OPEN_ACL_UNSAFE,
-                            CreateMode.PERSISTENT);
-                }
-            } catch (KeeperException e) {
-                System.out
-                        .println("Keeper exception when instantiating queue: "
-                                + e.toString());
-            } catch (InterruptedException e) {
-                System.out.println("Interrupted exception");
-            }
-        }
+        initZK(domain);
+        initZKRootNode(root);
     }
 
     /**
@@ -57,7 +45,10 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
         value = b.array();
         String node = zk.create(root + "/element", value, Ids.OPEN_ACL_UNSAFE,
                 CreateMode.PERSISTENT_SEQUENTIAL);
-        System.out.println("produce value: " + node);
+        System.out.println(Thread.currentThread().getName() + ": produce value: " + node);
+        synchronized (mutex){
+            mutex.notifyAll();//通知消费
+        }
         return true;
     }
 
@@ -78,24 +69,12 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
             synchronized (mutex) {
                 List<String> list = zk.getChildren(root, true);
                 if (list.size() == 0) {
-                    System.out.println("Going to wait");
+                    System.out.println(Thread.currentThread().getName() + ": resource not awailable, waitting for produce!");
                     mutex.wait();
                 } else {
                     list.sort((String s1, String s2) -> s1.compareTo(s2)); //消费序号最小的节点
                     String dest = list.get(0);
-//                    Integer min = new Integer(dest.replaceAll(".*[a-zA-Z]", ""));
-//                    for(String s : list){
-//                        Integer tempValue = new Integer(s.replaceAll(".*[a-zA-Z]", ""));
-//                        if(tempValue < min){
-//                            min = tempValue;
-//                            dest = s;
-//                        }
-//                    }
-//                    System.out.println("cosume value: " + root + "/" + dest);
-//                    byte[] b = zk.getData(root + "/" + dest,
-//                            false, stat);
-//                    zk.delete(root + "/" + dest, 0);
-                    System.out.println("cosume value: " + root + "/" + dest);
+                    System.out.println(Thread.currentThread().getName() + ": cosume value: " + root + "/" + dest);
                     byte[] b = zk.getData(root + "/" + dest,
                             false, stat);
                     zk.delete(root + "/" + dest, 0); //消费后删除
@@ -106,5 +85,42 @@ public class SyncPrimitiveQueue extends SyncPrimitive {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        SyncPrimitiveQueue syncPrimitiveQueue = new SyncPrimitiveQueue("localhost:2181", "/queue_test");
+        //生产 每隔三秒 模拟慢生产
+        new Thread(() -> {
+            for (int i = 0; i < Integer.MAX_VALUE; i++) {
+                try {
+                    syncPrimitiveQueue.produce(i);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(1, 3)*1000);
+                } catch (KeeperException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //消费 每隔一秒 模拟快消费
+        new Thread(() -> {
+            for (int i = 0; i < Integer.MAX_VALUE ; i++) {
+                try {
+                    syncPrimitiveQueue.consume();
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(1, 3)*1000);
+                } catch (KeeperException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
