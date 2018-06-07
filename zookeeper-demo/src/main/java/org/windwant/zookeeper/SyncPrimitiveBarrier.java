@@ -50,7 +50,7 @@ public class SyncPrimitiveBarrier extends SyncPrimitive {
      * @throws InterruptedException
      */
 
-    boolean enter() throws KeeperException, InterruptedException{
+    synchronized boolean enter() throws KeeperException, InterruptedException{
         List<String> list = zk.getChildren(root, true);
         //当前节点数小于阈值，则创建节点，进入barrier
         if (list.size() < size) {
