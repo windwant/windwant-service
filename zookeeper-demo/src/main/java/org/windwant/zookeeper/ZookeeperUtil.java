@@ -16,6 +16,12 @@ import java.util.List;
 public class ZookeeperUtil {
     private static final int SESSION_TIMEOUT = 30000;
 
+    /**
+     * 使用连接串创建连接
+     * @param domain
+     * @param w
+     * @return
+     */
     public static ZooKeeper getInstance(String domain, Watcher w){
         try {
             return new ZooKeeper(domain,SESSION_TIMEOUT, w);
@@ -24,6 +30,7 @@ public class ZookeeperUtil {
         }
         return null;
     }
+
 
     public static String createNode(ZooKeeper zk, String path, byte[] data){
         try {

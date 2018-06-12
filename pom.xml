@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>aio-demo</module>
         <module>concurrent-demo</module>
         <module>spring-oxm-demo</module>
         <module>httpserver-demo</module>
@@ -26,7 +25,7 @@
         <module>consul-demo</module>
         <module>cxf-demo</module>
         <module>spring-aop-demo</module>
-        <module>java-design-pattern-demo</module>
+        <module>java-design-pattern</module>
     </modules>
 
 </project>
