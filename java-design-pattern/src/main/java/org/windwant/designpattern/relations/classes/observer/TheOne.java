@@ -3,7 +3,7 @@ package org.windwant.designpattern.relations.classes.observer;
 import java.util.Observable;
 
 /**
- * Created by aayongche on 2016/9/22.
+ * Created by windwant on 2016/9/22.
  */
 public abstract class TheOne extends Observable {
     private String name;

@@ -1,7 +1,7 @@
 package com.nie.cxf.model;
 
 /**
- * Created by aayongche on 2016/1/8.
+ * Created by windwant on 2016/1/8.
  */
 public class User {
 

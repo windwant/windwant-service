@@ -3,7 +3,7 @@ package org.windwant.designpattern.relations.classstate.mediator;
 import java.util.Random;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class Sale extends AbstractColleage{
 

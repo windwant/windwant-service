@@ -1,7 +1,7 @@
 package org.windwant.designpattern.structure.adapter.interfaceadapter;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class MyMethod extends ManyMethodAbstractClass {
 

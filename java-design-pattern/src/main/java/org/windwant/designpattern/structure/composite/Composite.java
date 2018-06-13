@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class Composite extends Component {
 

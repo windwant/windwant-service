@@ -1,8 +1,8 @@
 package org.windwant.designpattern.structure.bridge;
 
 /**
- * 电视功能接口
- * Created by aayongche on 2016/9/21.
+ * 锟斤拷锟接癸拷锟杰接匡拷
+ * Created by windwant on 2016/9/21.
  */
 public interface TV {
     void turnOn();

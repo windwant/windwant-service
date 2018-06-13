@@ -8,7 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by aayongche on 2016/1/8.
+ * Created by windwant on 2016/1/8.
  */
 @Path("/cfxsvr")
 public interface CXFService {

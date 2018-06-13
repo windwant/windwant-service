@@ -4,7 +4,7 @@ import org.windwant.designpattern.structure.adapter.ChinaVoltage;
 import org.windwant.designpattern.structure.adapter.PowerVoltage;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class ChinaVoltageObjectAdapter implements PowerVoltage {
 

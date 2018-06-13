@@ -4,12 +4,12 @@ import org.windwant.designpattern.structure.adapter.ChinaVoltage;
 import org.windwant.designpattern.structure.adapter.PowerVoltage;
 
 /**
- * 适配类
- * Created by aayongche on 2016/9/21.
+ * 锟斤拷锟斤拷锟斤拷
+ * Created by windwant on 2016/9/21.
  */
 public class ChinaVoltageClassAdapter extends ChinaVoltage implements PowerVoltage {
 
-    /* 适配方法 使用标准接口方法内部调用 ChinaVoltage chong()方法 */
+    /* 锟斤拷锟戒方锟斤拷 使锟矫憋拷准锟接口凤拷锟斤拷锟节诧拷锟斤拷锟斤拷 ChinaVoltage chong()锟斤拷锟斤拷 */
     public void givePower() {
         super.chong();
     }

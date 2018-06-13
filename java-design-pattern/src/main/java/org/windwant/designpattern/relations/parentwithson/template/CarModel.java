@@ -1,7 +1,7 @@
 package org.windwant.designpattern.relations.parentwithson.template;
 
 /**
- * Created by aayongche on 2016/9/22.
+ * Created by windwant on 2016/9/22.
  */
 public abstract class CarModel {
     private boolean alarmFlag;

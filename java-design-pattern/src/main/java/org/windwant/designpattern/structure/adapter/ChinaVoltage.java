@@ -1,10 +1,10 @@
 package org.windwant.designpattern.structure.adapter;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class ChinaVoltage {
-    /* 非标准接口 */
+    /* 锟角憋拷准锟接匡拷 */
     public void chong() {
         System.out.println("chinar voltage 220V...");
     }

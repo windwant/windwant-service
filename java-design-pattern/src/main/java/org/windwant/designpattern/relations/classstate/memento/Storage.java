@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by aayongche on 2016/9/23.
+ * Created by windwant on 2016/9/23.
  */
 public class Storage {
     private List<Memento> mementos;

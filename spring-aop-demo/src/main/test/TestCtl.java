@@ -9,7 +9,7 @@ import org.windwant.spring.web.service.BookService;
 import javax.annotation.Resource;
 
 /**
- * Created by aayongche on 2016/3/9.
+ * Created by windwant on 2016/3/9.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="classpath*:applicationContext.xml")

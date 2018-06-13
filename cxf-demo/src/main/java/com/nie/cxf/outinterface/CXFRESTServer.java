@@ -9,21 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by aayongche on 2016/1/13.
+ * Created by windwant on 2016/1/13.
  */
 public class CXFRESTServer {
 
     public static final String ADDRESS = "http://localhost:9009/restdemo";
     public CXFRESTServer() {
-        // Ìí¼Ó ResourceClass
+        // ï¿½ï¿½ï¿½ ResourceClass
         List<Class<?>> resourceClassList = new ArrayList<Class<?>>();
         resourceClassList.add(CXFServiceImpl.class);
 
-        // Ìí¼Ó ResourceProvider
+        // ï¿½ï¿½ï¿½ ResourceProvider
         List<ResourceProvider> resourceProviderList = new ArrayList<ResourceProvider>();
         resourceProviderList.add(new SingletonResourceProvider(new CXFServiceImpl()));
 
-        // Ìí¼Ó Provider
+        // ï¿½ï¿½ï¿½ Provider
         List<Object> providerList = new ArrayList<Object>();
         providerList.add(new JacksonJsonProvider());
 

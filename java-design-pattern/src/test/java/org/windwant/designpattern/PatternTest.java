@@ -286,6 +286,9 @@ public class PatternTest
         }
     }
 
+    /**
+     * 责任链模式
+     */
     public void testChain(){
         List<Woman> arrayList = new ArrayList();
         for(int i = 0; i < 5; i++){
@@ -301,6 +304,9 @@ public class PatternTest
         }
     }
 
+    /**
+     * 命令模式
+     */
     public void testCommand(){
         Executor executor = new Executor();
         executor.setCommand(new AddRequirementCommand());

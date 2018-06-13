@@ -6,7 +6,7 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import javax.xml.ws.Endpoint;
 
 /**
- * Created by aayongche on 2016/1/7.
+ * Created by windwant on 2016/1/7.
  */
 public class CXFServer {
     private static final String ADDRESS = "http://localhost:9001/cxfdemo";

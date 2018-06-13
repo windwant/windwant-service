@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by aayongche on 2016/9/22.
+ * Created by windwant on 2016/9/22.
  */
 public class ProjectIteratorImpl implements ProjectIterator {
     private List<ProjectContainer> projectList = new ArrayList<ProjectContainer>();

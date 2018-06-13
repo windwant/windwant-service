@@ -3,7 +3,7 @@ package org.windwant.netty.serialize;
 import java.io.Serializable;
 
 /**
- * Created by aayongche on 2016/6/14.
+ * Created by windwant on 2016/6/14.
  */
 public class SubscribReq implements Serializable {
 

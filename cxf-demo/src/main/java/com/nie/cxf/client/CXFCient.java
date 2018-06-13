@@ -4,7 +4,7 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import com.nie.cxf.server.CXFDemo;
 
 /**
- * Created by aayongche on 2016/1/7.
+ * Created by windwant on 2016/1/7.
  */
 public class CXFCient {
     private static final String ADDRESS = "http://localhost:8080/cxf/services/cxfdemo";//"http://localhost:9001/cxfdemo";

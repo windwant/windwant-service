@@ -4,7 +4,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class PooledSth {
     private static CopyOnWriteArrayList<SharedObject> share = new CopyOnWriteArrayList<SharedObject>();

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by aayongche on 2016/9/19.
+ * Created by windwant on 2016/9/19.
  */
 public class ProtoTypePattern implements Cloneable, Serializable{
 
@@ -18,7 +18,7 @@ public class ProtoTypePattern implements Cloneable, Serializable{
         return super.clone();
     }
 
-    /* ¶ÔÏóµÄÐòÁÐ»¯ºÍ·´ÐòÁÐ»¯ */
+    /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ */
     public Object deepClone() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bas);

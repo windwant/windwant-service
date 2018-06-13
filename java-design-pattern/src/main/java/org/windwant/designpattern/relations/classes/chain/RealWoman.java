@@ -1,7 +1,7 @@
 package org.windwant.designpattern.relations.classes.chain;
 
 /**
- * Created by aayongche on 2016/9/22.
+ * Created by windwant on 2016/9/22.
  */
 public class RealWoman implements Woman{
 

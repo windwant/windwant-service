@@ -6,7 +6,7 @@ import com.nie.cxf.server.CXFDemo;
 import javax.jws.WebService;
 
 /**
- * Created by aayongche on 2016/1/7.
+ * Created by windwant on 2016/1/7.
  */
 @WebService
 public class CXFDemoImpl implements CXFDemo {

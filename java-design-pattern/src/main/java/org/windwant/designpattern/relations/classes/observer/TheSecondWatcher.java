@@ -4,7 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Created by aayongche on 2016/9/22.
+ * Created by windwant on 2016/9/22.
  */
 public class TheSecondWatcher implements Observer {
 

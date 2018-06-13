@@ -1,8 +1,8 @@
 package org.windwant.designpattern.structure.bridge;
 
 /**
- * Ò£¿ØÆ÷³éÏóÀà
- * Created by aayongche on 2016/9/21.
+ * Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * Created by windwant on 2016/9/21.
  */
 public abstract class AbstractRemoter {
     private TV tv;

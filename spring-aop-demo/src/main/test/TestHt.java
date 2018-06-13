@@ -7,7 +7,7 @@ import org.windwant.spring.web.service.UserService;
 
 
 /**
- * Created by aayongche on 2016/3/4.
+ * Created by windwant on 2016/3/4.
  */
 public class TestHt extends TestCase {
     ApplicationContext ctx;

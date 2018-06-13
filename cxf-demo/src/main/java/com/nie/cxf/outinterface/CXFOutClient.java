@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by aayongche on 2016/1/8.
+ * Created by windwant on 2016/1/8.
  */
 public class CXFOutClient {
     public static void main(String[] args){

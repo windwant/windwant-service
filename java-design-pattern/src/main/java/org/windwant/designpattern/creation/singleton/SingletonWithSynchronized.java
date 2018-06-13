@@ -1,17 +1,17 @@
 package org.windwant.designpattern.creation.singleton;
 
 /**
- * Created by aayongche on 2016/9/19.
+ * Created by windwant on 2016/9/19.
  */
 public class SingletonWithSynchronized {
 
     private static SingletonWithSynchronized singletonWithSynchronized;
     private static int count = 0;
 
-    /* Ë½ÓÐ¹¹Ôì·½·¨£¬·ÀÖ¹±»ÊµÀý»¯ */
+    /* Ë½ï¿½Ð¹ï¿½ï¿½ì·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ */
     private SingletonWithSynchronized(){}
 
-    /* ´Ë´¦Ê¹ÓÃÒ»¸öÄÚ²¿ÀàÀ´Î¬»¤µ¥Àý */
+    /* ï¿½Ë´ï¿½Ê¹ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
     private static synchronized void initInstance(){
         if(singletonWithSynchronized == null) {
             singletonWithSynchronized = new SingletonWithSynchronized();
@@ -19,7 +19,7 @@ public class SingletonWithSynchronized {
         }
     }
 
-    /* »ñÈ¡ÊµÀý */
+    /* ï¿½ï¿½È¡Êµï¿½ï¿½ */
     public static SingletonWithSynchronized getInstance(){
         if(singletonWithSynchronized == null){
             synchronized (SingletonWithSynchronized.class) {
@@ -29,7 +29,7 @@ public class SingletonWithSynchronized {
         return singletonWithSynchronized;
     }
 
-    /* Èç¹û¸Ã¶ÔÏó±»ÓÃÓÚÐòÁÐ»¯£¬¿ÉÒÔ±£Ö¤¶ÔÏóÔÚÐòÁÐ»¯Ç°ºó±£³ÖÒ»ÖÂ */
+    /* ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½Ç°ï¿½ó±£³ï¿½Ò»ï¿½ï¿½ */
     public Object readResolve(){
         return getInstance();
     }

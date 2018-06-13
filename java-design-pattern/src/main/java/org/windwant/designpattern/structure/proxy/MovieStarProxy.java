@@ -1,7 +1,7 @@
 package org.windwant.designpattern.structure.proxy;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class MovieStarProxy implements Star {
     private Star star;
@@ -10,7 +10,7 @@ public class MovieStarProxy implements Star {
         this.star = star;
     }
 
-    /* ´úÀímovie show condition */
+    /* ï¿½ï¿½ï¿½ï¿½movie show condition */
     public void movieShow(int money) {
         if (money > 10000) {
             star.movieShow(money);
@@ -19,7 +19,7 @@ public class MovieStarProxy implements Star {
         }
     }
 
-    /* ´úÀítv show condition */
+    /* ï¿½ï¿½ï¿½ï¿½tv show condition */
     public void tvShow(int money) {
         if(money > 10000){
             star.tvShow(money);

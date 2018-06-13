@@ -1,20 +1,20 @@
 package org.windwant.designpattern.relations.classstate.mediator;
 
 /**
- * Created by aayongche on 2016/9/21.
+ * Created by windwant on 2016/9/21.
  */
 public class Mediator extends AbstractMediator {
 
 
     @Override
     public void execute(String str, Object... objects) {
-        if(str.equals("purchase.buy")){ //²É¹ºµçÄÔ
+        if(str.equals("purchase.buy")){ //ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½
             this.buyComputer((Integer)objects[0]);
-        }else if(str.equals("sale.sell")){ //ÏúÊÛµçÄÔ
+        }else if(str.equals("sale.sell")){ //ï¿½ï¿½ï¿½Ûµï¿½ï¿½ï¿½
             this.sellComputer((Integer)objects[0]);
-        }else if(str.equals("sale.offsell")){ //ÕÛ¼ÛÏúÊÛ
+        }else if(str.equals("sale.offsell")){ //ï¿½Û¼ï¿½ï¿½ï¿½ï¿½ï¿½
             this.offSell();
-        }else if(str.equals("stock.clear")){ //Çå²Ö´¦Àí
+        }else if(str.equals("stock.clear")){ //ï¿½ï¿½Ö´ï¿½ï¿½ï¿½
             this.clearStock();
         }
     }

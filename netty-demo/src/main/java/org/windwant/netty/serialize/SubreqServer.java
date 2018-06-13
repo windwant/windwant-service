@@ -13,7 +13,7 @@ import io.netty.handler.logging.LoggingHandler;
 
 
 /**
- * Created by aayongche on 2016/6/14.
+ * Created by windwant on 2016/6/14.
  */
 public class SubreqServer {
     public static void main(String[] args) {
