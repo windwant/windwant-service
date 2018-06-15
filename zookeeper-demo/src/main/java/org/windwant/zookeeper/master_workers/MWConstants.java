@@ -1,5 +1,7 @@
 package org.windwant.zookeeper.master_workers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -27,4 +29,36 @@ public class MWConstants {
 
     public static AtomicBoolean MASTER_OK = new AtomicBoolean(false);
 
+    public static List<String> getWorkers() {
+        return workers;
+    }
+
+    public static void setWorkers(List<String> workers) {
+        MWConstants.workers = workers;
+    }
+
+    public static List<String> getTasks() {
+        return tasks;
+    }
+
+    public static void setTasks(List<String> tasks) {
+        if(tasks == null || tasks.isEmpty()) return;
+        tasks.stream().forEach(task->{
+            if(!MWConstants.getTasks().contains(task)){
+                MWConstants.getTasks().add(task);
+            };
+        });
+        MWConstants.tasks = tasks;
+    }
+
+    //available workers
+    private static List<String> workers = new ArrayList<>();
+    private static List<String> tasks = new ArrayList<>();
+
+    public static void main(String[] args) {
+        setWorkers(new ArrayList(){{add("abb");}});
+        System.out.println(getWorkers().toString());
+        getWorkers().remove(0);
+        System.out.println(getWorkers().toString());
+    }
 }

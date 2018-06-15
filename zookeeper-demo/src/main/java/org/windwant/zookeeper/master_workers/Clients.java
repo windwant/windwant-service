@@ -1,6 +1,7 @@
 package org.windwant.zookeeper.master_workers;
 
 import org.apache.zookeeper.*;
+import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -53,8 +54,17 @@ public class Clients extends Unit implements Runnable {
                 CreateMode.PERSISTENT_SEQUENTIAL,
                 (rc, path, ctx, name) -> {
                     log("client request post task " + name);
+                    try {
+                        Stat s = zk.exists(MWConstants.TASK_NODE_PATH, false);
+                        zk.setData(MWConstants.TASK_NODE_PATH, new byte[0], s.getVersion());
+                    } catch (KeeperException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     watchTask(name); //monitor status
                 }, new Object());
+
     }
 
     /**

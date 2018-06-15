@@ -18,9 +18,6 @@ public class Master extends Unit implements Runnable{
     private ZooKeeper zk;
     private int liveTime; //set thread live time，simulates master down
 
-    //available workers
-    private List<String> workers = new ArrayList<>();
-
     public Master(){}
 
     public Master(int liveTime){
@@ -47,9 +44,8 @@ public class Master extends Unit implements Runnable{
             }
         }, (rc, path, ctx, children, stat) -> {
             if (rc == 0 && children != null) {
-                workers = children;//cache locally
-                log("current available workers " + workers.toString());
-                assignTask();//deal task
+                MWConstants.setWorkers(children);//cache locally
+                log("current available workers " + MWConstants.getWorkers().toString());
             }
         }, tempWorkers);
     }
@@ -179,7 +175,11 @@ public class Master extends Unit implements Runnable{
             //task management
             assignTask();
         } catch (KeeperException e) {
-           e.printStackTrace();
+            if(e instanceof KeeperException.NodeExistsException){
+                log("master exists, wait and will try...");
+            }else {
+                e.printStackTrace();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -188,39 +188,59 @@ public class Master extends Unit implements Runnable{
     /**
      * assign comming tasks to awailable workers
      */
-    public void assignTask(){
+    public synchronized void assignTask(){
         //set task NodeChildrenChanged watch
-        zk.getChildren(MWConstants.TASK_NODE_PATH, event -> {
-            if (event.getType().equals(Watcher.Event.EventType.NodeChildrenChanged)) {
-                assignTask();
-            }
-        }, (rc, path, ctx, children, stat) -> {
-            if(children == null) return;
-            children.stream().forEach(child -> {
-                if(workers.size() > 0) {
-                    int need = ThreadLocalRandom.current().nextInt(0, workers.size());
-                    //create task worker relation node
-                    zk.create(MWConstants.ASSIGN_NODE_PATH + "/" + workers.get(need),
-                            child.getBytes(),//set task name to assigns/worker data
-                            ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                            CreateMode.EPHEMERAL,
-                            (rc1, path1, ctx1, name) -> {
-                                log("assign task " + child + " to worker " + workers.get(need));
-                                //remove worker item from local cache
-                                workers.remove(need);
-                                //once task assigned, delete its node
-                                zk.delete(MWConstants.TASK_NODE_PATH + "/" + child,
-                                        -1,
-                                        (rc2, path2, ctx2) -> {
-                                            log("task " + path2 + " node removed");
-                                        }, new Stat());
-                            }, new Object());
-                }else {
-                    log("no available workers !");
-                    return;
+        List<String> children = null;
+        try {
+            zk.getData(MWConstants.TASK_NODE_PATH, event -> {
+                if (event.getType().equals(Watcher.Event.EventType.NodeDataChanged)) {
+                    assignTask();
                 }
-            });
-        }, new Object());
+            }, new Stat());
+
+            children = zk.getChildren(MWConstants.TASK_NODE_PATH, false);
+
+        if (children == null) return;
+        MWConstants.setTasks(children);
+        //delete tasks already got
+        for (int i = 0; i < children.size(); i++) {
+            try {
+                zk.delete(MWConstants.TASK_NODE_PATH + "/" + children.get(i), -1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            }
+        };
+        if (MWConstants.getWorkers().size() == 0) {
+            log("no available workers !");
+            return;
+        }
+        for (int i = 0; i < MWConstants.getTasks().size(); i++) {
+            int wi = ThreadLocalRandom.current().nextInt(0, MWConstants.getWorkers().size());
+            int ti = ThreadLocalRandom.current().nextInt(0, MWConstants.getTasks().size());
+            try {
+                zk.create(MWConstants.ASSIGN_NODE_PATH + "/" + MWConstants.getWorkers().get(wi),
+                        MWConstants.getTasks().get(ti).getBytes(),//set task name to assigns/worker data
+                        ZooDefs.Ids.OPEN_ACL_UNSAFE,
+                        CreateMode.EPHEMERAL);
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log("assign task " + MWConstants.getTasks().get(ti) + " to worker " + MWConstants.getWorkers().get(wi));
+            //remove worker item from local cache
+            MWConstants.getWorkers().remove(wi);
+            //once task assigned, delete its node
+            MWConstants.getTasks().remove(ti);
+        }
+        assignTask();
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
