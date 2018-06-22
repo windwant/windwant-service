@@ -1,4 +1,4 @@
-package org.rocketmq.test;
+package org.windwant.rocketmq;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

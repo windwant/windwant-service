@@ -1,6 +1,5 @@
-package org.rocketmq.test;
+package org.windwant.rocketmq;
 
-import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.rocketmq.client.consumer.DefaultMQPullConsumer;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.PullResult;
@@ -15,6 +14,7 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.windwant.rocketmq.producer.TProducer;
 
 import java.io.IOException;
 import java.io.InputStream;
