@@ -4,15 +4,12 @@ import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.*;
 import org.apache.rocketmq.common.message.Message;
-import org.apache.rocketmq.common.message.MessageQueue;
-import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.windwant.rocketmq.Constants;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -21,22 +18,31 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  */
 public class TProducer{
-    private static DefaultMQProducer producer;
-    static {
-        synchronized (TProducer.class){
-            producer = new DefaultMQProducer("ExampleProducerGroup");
-            producer.setNamesrvAddr("localhost:9876");
-            // Launch producer
-            try {
-                producer.start();
-            } catch (MQClientException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    private DefaultMQProducer producer;
+
     private static final Logger logger = LoggerFactory.getLogger(TProducer.class);
 
+    private String groupName;
 
+    private String nameServer;
+
+    TProducer(){};
+
+    public TProducer(String groupName, String nameServer){
+        this.groupName = groupName;
+        this.nameServer = nameServer;
+    }
+
+    public void init(){
+        producer = new DefaultMQProducer(groupName);
+        producer.setNamesrvAddr(nameServer);
+        // Launch producer
+        try {
+            producer.start();
+        } catch (MQClientException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 构建消息
      * @param topic
@@ -45,22 +51,13 @@ public class TProducer{
      * @param delay
      * @return
      */
-    public static Message composeMsg(String topic, String tag, String msg, int delay){
+    public Message composeMsg(String topic, String tag, String msg, int delay){
         Message message = new Message(topic, tag, msg.getBytes());
         if (delay > 0) {
             // This message will be delivered to consumer 10 seconds later.
             message.setDelayTimeLevel(delay);
         }
         return message;
-    }
-
-    public static void main( String[] args ) throws MQClientException, RemotingException, InterruptedException, MQBrokerException, UnsupportedEncodingException {
-//        synSend("synsend", "syn", "synmessage", -2);
-//        synSend("synsend", "syn delay", "synmessage", 3);
-//        batchSend("batchsend", "batch", Arrays.asList("batchmsg1", "batchmsg2", "batchmsg3", "batchmsg4", "batchmsg5", "batchmsg6", "batchmsg7", "batchmsg8"), 3);
-//        asynSend("asynsend", "asyn", "asynmessage", -1);
-//        oneWaySend("onewaysend", "oneway", "onewaymessage", -1);
-        orderProducer("orderlysend", "orderly", "orderlymessage", -1);
     }
 
     /**
@@ -70,7 +67,7 @@ public class TProducer{
      * @throws InterruptedException
      * @throws MQBrokerException
      */
-    public static void synSend(String topic, String tag, String msg, int delay){
+    public void synSend(String topic, String tag, String msg, int delay){
         // Send the message
         SendResult result = null;
         try {
@@ -99,7 +96,7 @@ public class TProducer{
      * @throws InterruptedException
      * @throws MQBrokerException
      */
-    public static void batchSend(final String topic, final String tag, List<String> msg, int batchSize) {
+    public void batchSend(final String topic, final String tag, List<String> msg, int batchSize) {
         List<Message> batch = new ArrayList();
         msg.stream().forEach(m -> {
             batch.add(composeMsg(topic, tag, m, -1));
@@ -133,7 +130,7 @@ public class TProducer{
      * @throws InterruptedException
      * @throws MQBrokerException
      */
-    public static void asynSend(String topic, String tag, String msg, int delay){
+    public void asynSend(String topic, String tag, String msg, int delay){
         Message message = new Message(topic, tag, msg.getBytes());
         if (delay > 0) {
             // This message will be delivered to consumer 10 seconds later.
@@ -167,7 +164,7 @@ public class TProducer{
      * @throws InterruptedException
      * @throws MQBrokerException
      */
-    public static void oneWaySend(String topic, String tag, String msg, int delay) {
+    public void oneWaySend(String topic, String tag, String msg, int delay) {
         try {
             producer.sendOneway(composeMsg(topic, tag, msg, delay));
             logger.info("oneway send msg {}", topic);
@@ -187,7 +184,7 @@ public class TProducer{
      * @param msg
      * @param delay
      */
-    public static void orderProducer(String topic, String tag, String msg, int delay) {
+    public void orderProducer(String topic, String tag, String msg, int delay) {
         Message message = composeMsg(topic, tag, msg, delay);
         // Send the message
         try {
@@ -204,5 +201,24 @@ public class TProducer{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        TProducer producer = new TProducer(Constants.producerGroup, Constants.nameServer);
+        producer.init();
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+//        producer.synSend("synsend", "syn", "synmessage", -2);
+//        producer.synSend("synsend", "syn delay", "synmessage", 3);
+//        producer.batchSend("batchsend", "batch", Arrays.asList("batchmsg1", "batchmsg2", "batchmsg3", "batchmsg4", "batchmsg5", "batchmsg6", "batchmsg7", "batchmsg8"), 3);
+//        producer.asynSend("asynsend", "asyn", "asynmessage", -1);
+//        producer.oneWaySend("onewaysend", "oneway", "onewaymessage", -1);
+            producer.orderProducer("orderlysend", "orderly", "orderlymessage" + i, -1);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }
