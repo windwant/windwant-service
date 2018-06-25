@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.windwant.rocketmq.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -33,6 +34,9 @@ public class TProducer{
         this.nameServer = nameServer;
     }
 
+    /**
+     * 初始化producer
+     */
     public void init(){
         producer = new DefaultMQProducer(groupName);
         producer.setNamesrvAddr(nameServer);
@@ -55,10 +59,63 @@ public class TProducer{
         Message message = new Message(topic, tag, msg.getBytes());
         if (delay > 0) {
             // This message will be delivered to consumer 10 seconds later.
+            //1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
             message.setDelayTimeLevel(delay);
         }
         return message;
     }
+
+    /**
+     *
+     * @param topic
+     * @param tag
+     * @param msg
+     * @param delay message delay
+     * @param type 1 syn 2 asyn 3 oneway 4 orderly
+     */
+    public void send(String topic, String tag, String msg, int delay, int type){
+        Message message = composeMsg(topic, tag, msg, -1);
+        if (delay > 0) {
+            // This message will be delivered to consumer 10 seconds later.
+            message.setDelayTimeLevel(delay);
+        }
+        switch (type){
+            case 1: synSend(message); break;
+            case 2: asynSend(message); break;
+            case 3: oneWaySend(message); break;
+            case 4: orderSend(message); break;
+        }
+    }
+
+    /**
+     *
+     * @param topic
+     * @param tag
+     * @param msg
+     * @param type 1 syn 2 asyn 3 oneway 4 orderly
+     */
+    public void send(String topic, String tag, String msg, int type){
+        send(topic, tag, msg, -1, type);
+    }
+
+    /**
+     * @param topic
+     * @param tag
+     * @param msg
+     */
+    public void send(String topic, String tag, String msg){
+        send(topic, tag, msg, -1, 1);
+    }
+
+    /**
+     * use topic as tag
+     * @param topic
+     * @param msg
+     */
+    public void send(String topic, String msg){
+        send(topic, topic, msg, -1, 1);
+    }
+
 
     /**
      * Application: Reliable synchronous transmission is used in extensive scenes, such as important notification messages, SMS notification, SMS marketing system, etc..
@@ -67,11 +124,9 @@ public class TProducer{
      * @throws InterruptedException
      * @throws MQBrokerException
      */
-    public void synSend(String topic, String tag, String msg, int delay){
-        // Send the message
-        SendResult result = null;
+    private void synSend(Message message){
         try {
-            result = producer.send(composeMsg(topic, tag, msg, delay));
+            SendResult result = producer.send(message);
             logger.info("syn send result: {}", result);
         } catch (MQClientException e) {
             e.printStackTrace();
@@ -130,21 +185,15 @@ public class TProducer{
      * @throws InterruptedException
      * @throws MQBrokerException
      */
-    public void asynSend(String topic, String tag, String msg, int delay){
-        Message message = new Message(topic, tag, msg.getBytes());
-        if (delay > 0) {
-            // This message will be delivered to consumer 10 seconds later.
-            message.setDelayTimeLevel(delay);
-        }
-        // Send the message
+    private void asynSend(Message message){
         try {
             producer.send(message, new SendCallback() {
                 public void onSuccess(SendResult sendResult) {
-                    logger.info("msg {} send result: {}", topic, sendResult);
+                    logger.info("msg {} send result: {}", message, sendResult);
                 }
 
                 public void onException(Throwable e) {
-                    logger.info("msg {} send exception: {}", topic, e.getMessage());
+                    logger.info("msg {} send exception: {}", message, e.getMessage());
                     e.printStackTrace();
                 }
             });
@@ -164,10 +213,10 @@ public class TProducer{
      * @throws InterruptedException
      * @throws MQBrokerException
      */
-    public void oneWaySend(String topic, String tag, String msg, int delay) {
+    private void oneWaySend(Message message) {
         try {
-            producer.sendOneway(composeMsg(topic, tag, msg, delay));
-            logger.info("oneway send msg {}", topic);
+            producer.sendOneway(message);
+            logger.info("oneway send msg {}", message);
         } catch (MQClientException e) {
             e.printStackTrace();
         } catch (RemotingException e) {
@@ -179,18 +228,13 @@ public class TProducer{
 
     /**
      * 根据msg 选择 queue
-     * @param topic
-     * @param tag
-     * @param msg
-     * @param delay
      */
-    public void orderProducer(String topic, String tag, String msg, int delay) {
-        Message message = composeMsg(topic, tag, msg, delay);
+    private void orderSend(Message message) {
         // Send the message
         try {
             SendResult result = producer.send(message, (mqs, msg1, arg) -> {
                 return mqs.get(ThreadLocalRandom.current().nextInt(mqs.size()));
-            }, msg);
+            }, message);
             logger.info("orderly send msg: {}, result: {}", result);
         } catch (MQClientException e) {
             e.printStackTrace();
@@ -203,22 +247,28 @@ public class TProducer{
         }
     }
 
+    public void shutdown(){
+        if(producer != null){
+            producer.shutdown();
+        }
+    }
+
     public static void main(String[] args) {
         TProducer producer = new TProducer(Constants.producerGroup, Constants.nameServer);
         producer.init();
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-//        producer.synSend("synsend", "syn", "synmessage", -2);
-//        producer.synSend("synsend", "syn delay", "synmessage", 3);
-//        producer.batchSend("batchsend", "batch", Arrays.asList("batchmsg1", "batchmsg2", "batchmsg3", "batchmsg4", "batchmsg5", "batchmsg6", "batchmsg7", "batchmsg8"), 3);
-//        producer.asynSend("asynsend", "asyn", "asynmessage", -1);
-//        producer.oneWaySend("onewaysend", "oneway", "onewaymessage", -1);
-            producer.orderProducer("orderlysend", "orderly", "orderlymessage" + i, -1);
+        for (int i = 0; i < 10; i++) {
+            producer.send("synsend", "syn", "synmessage", 1);
+            producer.send("synsend", "syn delay", "synmessage", 3, 1);
+//            producer.batchSend("batchsend", "batch", Arrays.asList("batchmsg1", "batchmsg2", "batchmsg3", "batchmsg4", "batchmsg5", "batchmsg6", "batchmsg7", "batchmsg8"), 3);
+            producer.send("asynsend", "asyn", "asynmessage", 2);
+            producer.send("onewaysend", "oneway", "onewaymessage", 3);
+            producer.send("orderlysend", "orderly", "orderlymessage" + i, 4);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
+        producer.shutdown();
     }
 }
