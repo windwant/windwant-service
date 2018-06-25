@@ -141,6 +141,9 @@ public class TProducer{
     }
 
     /**
+     * message limit:
+     *   same topic, same waitStoreMsgOK and no schedule support;
+     *   the total size of the messages in one batch should be no more than 1MiB.
      * 批量发送
      * @param topic
      * @param tag
@@ -227,6 +230,8 @@ public class TProducer{
     }
 
     /**
+     * messages in the same queue can be consumed sequentially.
+     * So we always send the congeneric messages to the same queue to guarantee ordering, which will cause hot-point issue
      * 根据msg 选择 queue
      */
     private void orderSend(Message message) {
@@ -259,7 +264,6 @@ public class TProducer{
         for (int i = 0; i < 10; i++) {
             producer.send("synsend", "syn", "synmessage", 1);
             producer.send("synsend", "syn delay", "synmessage", 3, 1);
-//            producer.batchSend("batchsend", "batch", Arrays.asList("batchmsg1", "batchmsg2", "batchmsg3", "batchmsg4", "batchmsg5", "batchmsg6", "batchmsg7", "batchmsg8"), 3);
             producer.send("asynsend", "asyn", "asynmessage", 2);
             producer.send("onewaysend", "oneway", "onewaymessage", 3);
             producer.send("orderlysend", "orderly", "orderlymessage" + i, 4);
@@ -269,6 +273,8 @@ public class TProducer{
                 e.printStackTrace();
             }
         }
+        producer.batchSend("batchsend", "batch", Arrays.asList("batchmsg1", "batchmsg2", "batchmsg3", "batchmsg4", "batchmsg5", "batchmsg6", "batchmsg7", "batchmsg8"), 3);
+
         producer.shutdown();
     }
 }
