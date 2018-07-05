@@ -38,10 +38,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -63,17 +60,18 @@ import java.util.List;
  * Created by windwant on 2016/6/5.
  */
 public class MyHttpTest {
+    public static final String URL_PNG = "http://pic1.win4000.com/wallpaper/b/594dfcbbf2b24.jpg";
     public static void main(String[] args) {
-        testPost();
+        testGetFile();
     }
 
     public static void testGetFileMap(){
         CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
-        HttpGet hp = new HttpGet("https://crmtest.aachuxing.com/app/drivers/1418111014-58097.png");
+        HttpGet hp = new HttpGet(URL_PNG);
         CloseableHttpResponse closeableHttpResponse = null;
         try {
             closeableHttpResponse = closeableHttpClient.execute(hp);
-            RandomAccessFile rf = new RandomAccessFile("head.png", "rw");
+            RandomAccessFile rf = new RandomAccessFile("httpserver-demo\\head.png", "rw");
             FileChannel f = rf.getChannel();
             MappedByteBuffer mbb = null;
             byte[] bbf = new byte[2048];
@@ -85,7 +83,7 @@ public class MyHttpTest {
                 bbf = new byte[2048];
                 pos += 2048;
             }
-            unmap(mbb);
+            HttpUtils.unmap(mbb);
             f.close();
             closeableHttpClient.close();
         } catch (IOException e) {
@@ -93,45 +91,13 @@ public class MyHttpTest {
         }
     }
 
-    public static void unmap(final MappedByteBuffer mappedByteBuffer) {
-        try {
-            if (mappedByteBuffer == null) {
-                return;
-            }
-
-            mappedByteBuffer.force();
-            AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                @SuppressWarnings("restriction")
-                public Object run() {
-                    try {
-                        Method getCleanerMethod = mappedByteBuffer.getClass()
-                                .getMethod("cleaner", new Class[0]);
-                        getCleanerMethod.setAccessible(true);
-                        sun.misc.Cleaner cleaner =
-                                (sun.misc.Cleaner) getCleanerMethod
-                                        .invoke(mappedByteBuffer, new Object[0]);
-                        cleaner.clean();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("clean MappedByteBuffer completed");
-                    return null;
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void testGetFile(){
         CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
-        HttpGet hp = new HttpGet("https://crmtest.aachuxing.com/app/drivers/1418111014-58097.png");
+        HttpGet hp = new HttpGet("http://localhost:8888/index.html");
         CloseableHttpResponse closeableHttpResponse = null;
         try {
             closeableHttpResponse = closeableHttpClient.execute(hp);
-            RandomAccessFile rf = new RandomAccessFile("head.png", "rw");
+            RandomAccessFile rf = new RandomAccessFile("httpserver-demo\\head.png", "rw");
             FileChannel f = rf.getChannel();
             ByteBuffer bf = ByteBuffer.allocate(2048);
             byte[] bbf = new byte[2048];

@@ -11,7 +11,7 @@ import java.net.Socket;
  * Created by windwant on 2016/6/12.
  */
 public class HttpServer {
-    public static final String WEB_ROOT = System.getProperty("user.dir") + "\\src\\test\\resources\\webroot";
+    public static final String WEB_ROOT = System.getProperty("user.dir") + "\\httpserver-demo\\src\\test\\resources\\webroot";
     public static final int SERVER_PORT = 8888;
     public static final String SERVER_IP = "127.0.0.1";
 
@@ -31,9 +31,9 @@ public class HttpServer {
                 Request request = new Request(in);
                 request.read();
 
-                Response response = new Response(out);
+                Response response = new Response();
                 response.setRequest(request);
-                response.response();
+                response.response(out);
                 socket.close();
             }
         } catch (IOException e) {
