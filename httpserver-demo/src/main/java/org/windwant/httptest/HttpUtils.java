@@ -1,41 +1,23 @@
 package org.windwant.httptest;
 
-import com.sun.imageio.plugins.png.PNGMetadata;
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.client.CredentialsProvider;
+import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.SocketConfig;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
-import org.windwant.HTTPConstants;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by windwant on 2016/6/5.
@@ -72,54 +54,9 @@ public class HttpUtils {
 
     }
 
-    public static ExecutorService service = Executors.newFixedThreadPool(10);
-    public static final String TEST_URL = "http://localhost:8888/";
-    public static final int REQUEST_TIMES = 1;
-    public static void testHttpNIOServerRequest(){
-        for (int i = 0; i < REQUEST_TIMES; i++) {
-            final int finalI = i;
-            service.submit(() -> {
-                CloseableHttpResponse closeableHttpResponse = null;
-                HttpGet hp = new HttpGet(TEST_URL + HTTPConstants.RESOURCES.get(ThreadLocalRandom.current().nextInt(7)));
-                try {
-                    closeableHttpResponse = client.execute(hp);
-//
-                    System.out.println(closeableHttpResponse.getStatusLine());
-                    System.out.println("byte: " + closeableHttpResponse.getEntity().getContent().available());
-                    if(HTTPConstants.CONTENT_TYPE.get("html").equals(closeableHttpResponse.getEntity().getContentType().getValue())){
-                        System.out.println(EntityUtils.toString(closeableHttpResponse.getEntity()));
-                    }else if(HTTPConstants.CONTENT_TYPE.get("png").equals(closeableHttpResponse.getEntity().getContentType().getValue())) {
-                        byte[] bbf = new byte[2048];
-                        InputStream in = closeableHttpResponse.getEntity().getContent();
-                        int pre = 0;
-                        int pos;
-                        MappedByteBuffer mbb = null;
-                        FileChannel fc = new RandomAccessFile("httpserver-demo\\head" +  + System.currentTimeMillis() + ".png", "rw").getChannel();
-                        while ((pos = in.read(bbf)) != -1){
-                            mbb = fc.map(FileChannel.MapMode.READ_WRITE, pre, pos);
-                            mbb.put(bbf, 0, pos);
-                            bbf = new byte[2048];
-                            pre = pos;
-                        }
-                        System.out.println("save request image size: " + fc.size() + "");
-                        unmap(mbb);
-                    }
-
-                    System.out.println(Thread.currentThread().getName() + ": execute " + finalI);
-                    System.out.println("conn mgr stats: " + mgr.getTotalStats());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }finally {
-                    if(closeableHttpResponse != null){
-                        try {
-                            closeableHttpResponse.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-        }
+    public static CloseableHttpResponse httpGet(String url) throws IOException {
+        System.out.println("conn mgr stats: " + mgr.getTotalStats());
+        return client.execute(new HttpGet(url));
     }
 
     public static CloseableHttpClient getInstance(){
@@ -180,11 +117,5 @@ public class HttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        testHttpNIOServerRequest();
-//            client.close();
-//            mgr.shutdown();
     }
 }
