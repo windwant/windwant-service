@@ -32,8 +32,7 @@ public class HttpServer {
                 request.read();
 
                 Response response = new Response();
-                response.setRequest(request);
-                response.response(out);
+                response.response(out, request);
                 socket.close();
             }
         } catch (IOException e) {

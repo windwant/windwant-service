@@ -17,16 +17,10 @@ import java.nio.channels.SocketChannel;
 public class Response {
     private static final int BUFFER_SIZE = 1024;
 
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    Request request;
-
     public Response(){
     }
 
-    public void response(OutputStream out){
+    public void response(OutputStream out, Request request){
         byte[] b = new byte[BUFFER_SIZE];
         File file = new File(HttpServer.WEB_ROOT, request.getPath());
         try {
@@ -57,7 +51,11 @@ public class Response {
      * nio server 处理返回内容
      * @throws IOException
      */
-    public void responseNIO(SocketChannel channel) throws IOException {
+    public void response(SocketChannel channel, Request request) throws IOException {
+        if("upload".equals(request.getPath())){
+
+            return;
+        }
         File file = new File(HttpServer.WEB_ROOT, request.getPath());
         if(file != null && file.exists()){
             dealFileWrite(channel, file);//处理请求资源
@@ -66,6 +64,9 @@ public class Response {
         }
     }
 
+    protected void dealUpload(SocketChannel channel){
+
+    }
     /**
      * 处理请求资源
      * @param channel

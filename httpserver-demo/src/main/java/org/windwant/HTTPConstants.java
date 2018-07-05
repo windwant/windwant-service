@@ -17,6 +17,7 @@ public interface HTTPConstants {
         put("png", "image/png");
         put("jpg", "image/jpeg");
         put("js", "application/x-javascript");
+        put("file", "application/octet-stream");
     }};
 
     List<String> RESOURCES = new ArrayList(){{

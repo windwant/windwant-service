@@ -80,7 +80,6 @@ public class HttpNIOServer {
     }
 
     public void handleRequest(SelectionKey selectionKey){
-        System.out.println("request channel: " + selectionKey.channel());
         ServerSocketChannel ssc = null;
         SocketChannel ss = null;
         try {
@@ -92,13 +91,15 @@ public class HttpNIOServer {
             }else if(selectionKey.isReadable()){
                 ss = (SocketChannel) selectionKey.channel();
                 request = new Request();
-                request.read(ss);//请求处理
-                ss.register(selector, SelectionKey.OP_WRITE);
+                if(request.read(ss)) {//请求处理
+                    ss.register(selector, SelectionKey.OP_WRITE);
+                }else {
+                    throw new IOException();
+                }
             }else if(selectionKey.isWritable()){
                 ss = (SocketChannel) selectionKey.channel();
                 Response response = new Response();
-                response.setRequest(request);
-                response.responseNIO(ss);
+                response.response(ss, request);
                 ss.register(selector, SelectionKey.OP_READ);
             }
         } catch (IOException e) {//客户端断开异常处理

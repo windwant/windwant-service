@@ -1,6 +1,7 @@
 package org.windwant.httptest;
 
 import org.apache.http.*;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -9,7 +10,11 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
@@ -18,15 +23,41 @@ import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by windwant on 2016/6/5.
  */
 public class HttpUtils {
     //应用结束时需要shutdown getTotalStats：leased当前使用的线程数，pending等待数，available可用数 max最大数
-    protected static PoolingHttpClientConnectionManager mgr;
+    private static PoolingHttpClientConnectionManager mgr;
     //CloseableHttpClient是线程安全的，建议相同的这个类的实例被重用于多个请求执行
-    protected static CloseableHttpClient client;
+    private static CloseableHttpClient client;
+    private static HttpContext hc;
+
+    public static PoolingHttpClientConnectionManager getMgr() {
+        return mgr;
+    }
+
+    public static void setMgr(PoolingHttpClientConnectionManager mgr) {
+        HttpUtils.mgr = mgr;
+    }
+
+    public static CloseableHttpClient getClient() {
+        return client;
+    }
+
+    public static void setClient(CloseableHttpClient client) {
+        HttpUtils.client = client;
+    }
+
+    public static HttpContext getHc() {
+        return hc;
+    }
+
+    public static void setHc(HttpContext hc) {
+        HttpUtils.hc = hc;
+    }
 
     static {
         mgr = new PoolingHttpClientConnectionManager();
@@ -50,13 +81,35 @@ public class HttpUtils {
                 .setConnectionReuseStrategy(new DefaultClientConnectionReuseStrategy())
                 .setConnectionManagerShared(true)
                 .setDefaultCredentialsProvider(new SystemDefaultCredentialsProvider())
-                .build();
+                .addInterceptorFirst((HttpRequest request, HttpContext context) -> {//拦截器
+                    request.addHeader("intercepter_var", "intercepter_var_" + ThreadLocalRandom.current().nextInt(10));
+                })
+                .setRetryHandler((exception, executionCount, context) -> {//重试
+                    System.out.println("retry execute count: " + executionCount);
+                    if(executionCount > 2){
+                        return false;
+                    }
+                    if(exception instanceof NoHttpResponseException){
+                        return true;
+                    }
+                    if(exception instanceof SSLHandshakeException){
+                        return false;
+                    }
 
+                    HttpRequest request = (HttpRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
+                    if(!(request instanceof HttpEntityEnclosingRequest)){
+                        return true;
+                    }
+                    return false;
+                })
+                .build();
+        hc = new BasicHttpContext();
+        hc.setAttribute("count", 0);
     }
 
     public static CloseableHttpResponse httpGet(String url) throws IOException {
         System.out.println("conn mgr stats: " + mgr.getTotalStats());
-        return client.execute(new HttpGet(url));
+        return client.execute(new HttpGet(url), hc);
     }
 
     public static CloseableHttpClient getInstance(){
@@ -70,6 +123,15 @@ public class HttpUtils {
         return new HttpPost(url);
     }
 
+    /**
+     * get request form
+     * @param host
+     * @param port
+     * @param path
+     * @param scheme
+     * @param params
+     * @return
+     */
     public static HttpGet getHttpGet(String host, int port, String path, String scheme, List<NameValuePair> params){
         URIBuilder ub = new URIBuilder();
         ub.setScheme(null != scheme?scheme:"http");

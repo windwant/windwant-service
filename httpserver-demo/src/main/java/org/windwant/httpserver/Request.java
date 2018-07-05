@@ -44,7 +44,7 @@ public class Request {
         }
     }
 
-    public void read(SocketChannel channel) throws IOException {
+    public boolean read(SocketChannel channel) throws IOException {
         ByteBuffer byteBuffer = ByteBuffer.allocate(2048);
         StringBuffer sb = new StringBuffer();
         while (channel.read(byteBuffer) > 0) {
@@ -57,7 +57,9 @@ public class Request {
         }
         if(sb.length() > 0) {
             filterUri(sb.toString());
+            return true;
         }
+        return false;
     }
 
     private String metod;
@@ -110,8 +112,8 @@ public class Request {
     public void filterUri(String request){
         formatRequest(request);
         System.out.println("http request: " + request);
-        if(!(path.endsWith(".html") || path.endsWith(".htm") || path.endsWith(".jpg") || path.endsWith(".png"))){
-            uri = "/404.html";
+        if(!(path.endsWith(".html") || path.endsWith(".htm") || path.endsWith(".jpg") || path.endsWith(".png") || path.equals("upload"))){
+            path = "/redirect.html";
             System.out.println("http request uri rewrite: " + path);
         }
     }
