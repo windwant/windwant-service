@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by Administrator on 18-7-4.
  */
 public interface HTTPConstants {
-    String WEB_ROOT = System.getProperty("user.dir") + "\\httpserver-demo\\src\\test\\resources\\webroot";
+    String WEB_ROOT = System.getProperty("user.dir") + "\\httpserver-service\\src\\test\\resources\\webroot";
 
     Map<String, String> CONTENT_TYPE = new HashMap(){{
         put("html", "text/html");

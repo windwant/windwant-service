@@ -22,7 +22,7 @@ public class Response {
 
     public void response(OutputStream out, Request request){
         byte[] b = new byte[BUFFER_SIZE];
-        File file = new File(HttpServer.WEB_ROOT, request.getPath());
+        File file = new File(HTTPConstants.WEB_ROOT, request.getPath());
         try {
             StringBuilder sb = new StringBuilder();
             if(file.exists()){
@@ -56,7 +56,7 @@ public class Response {
 
             return;
         }
-        File file = new File(HttpServer.WEB_ROOT, request.getPath());
+        File file = new File(HTTPConstants.WEB_ROOT, request.getPath());
         if(file != null && file.exists()){
             dealFileWrite(channel, file);//处理请求资源
         }else{
