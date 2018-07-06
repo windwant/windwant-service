@@ -4,27 +4,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.windwant.demo</groupId>
-    <artifactId>windwant-demo</artifactId>
+    <groupId>org.windwant.service</groupId>
+    <artifactId>windwant-service</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>concurrent-demo</module>
-        <module>spring-oxm-demo</module>
-        <module>httpserver-demo</module>
-        <module>nativemethod-demo</module>
-        <module>jax-rs-demo</module>
-        <module>io-demo</module>
-        <module>jetty-demo</module>
-        <module>rocketmq-demo</module>
-        <module>zookeeper-demo</module>
-        <module>netty-demo</module>
-        <module>elasticjob-demo</module>
-        <module>algorithm-demo</module>
-        <module>consul-demo</module>
-        <module>cxf-demo</module>
-        <module>spring-aop-demo</module>
+        <module>concurrent-service</module>
+        <module>spring-oxm-service</module>
+        <module>httpserver-service</module>
+        <module>nativemethod-service</module>
+        <module>jax-rs-service</module>
+        <module>io-service</module>
+        <module>jetty-service</module>
+        <module>rocketmq-service</module>
+        <module>zookeeper-service</module>
+        <module>netty-service</module>
+        <module>elasticjob-service</module>
+        <module>algorithm</module>
+        <module>consul-service</module>
+        <module>cxf-service</module>
+        <module>spring-aop-service</module>
         <module>java-design-pattern</module>
     </modules>
 
