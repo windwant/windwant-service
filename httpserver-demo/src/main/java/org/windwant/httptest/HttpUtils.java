@@ -1,27 +1,34 @@
 package org.windwant.httptest;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
+import org.apache.http.ssl.SSLContexts;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.Charset;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import java.security.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -60,7 +67,32 @@ public class HttpUtils {
     }
 
     static {
-        mgr = new PoolingHttpClientConnectionManager();
+        //安全套接字工厂 or SSLEngines 工厂类
+        SSLContext sslContext = null;
+        //支持的scheme
+        Registry<ConnectionSocketFactory> registry = null;
+        try {
+            sslContext = SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
+            //server's X.509 certificate 主机验证
+            HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.getDefaultHostnameVerifier();
+            //安全链接套接字工厂
+            SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+            RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
+
+            registry = registryBuilder
+                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                    .register("https", sslConnectionSocketFactory)
+                    .build();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+
+
+        mgr = registry == null?new PoolingHttpClientConnectionManager():new PoolingHttpClientConnectionManager(registry);
         ConnectionConfig config = ConnectionConfig.custom().setBufferSize(4 * 1024).setCharset(Charset.defaultCharset()).build();
         mgr.setDefaultConnectionConfig(config);
         SocketConfig sconfig = SocketConfig.custom()

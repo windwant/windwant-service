@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 请求对象
@@ -65,6 +68,15 @@ public class Request {
     private String metod;
     private String path;
     private String scheme;
+    private Map<String, String> argvs = new HashMap();
+
+    public Map<String, String> getArgvs() {
+        return argvs;
+    }
+
+    public void setArgvs(Map<String, String> argvs) {
+        this.argvs = argvs;
+    }
 
     public void setUri(String uri) {
         this.uri = uri;
@@ -101,10 +113,20 @@ public class Request {
         String[] firstLine = lines[0].split(" ");
         if(firstLine == null || firstLine.length < 3) return;
         this.metod = firstLine[0];
-        this.path = firstLine[1];
+        String[] paths = firstLine[1].split("\\?");
+        this.path = paths[0];
+        if(paths.length > 1){
+            Arrays.asList(paths[1].split("&")).stream().forEach(item->{
+                String[] kv = item.split("=");
+                argvs.put(kv[0], kv.length > 1?kv[1]:"");
+            });
+        }
         this.scheme = firstLine[2];
     }
 
+    public static void main(String[] args) {
+        System.out.println("a".split("\\?")[0]);
+    }
     /**
      * url 过滤
      * @param request
