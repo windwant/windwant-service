@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.windwant.elaticjob</groupId>
-  <artifactId>elaticjob-service</artifactId>
+  <artifactId>elasticjob-service</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>elaticjob-service</name>
+  <name>elasticjob-service</name>
   <url>http://maven.apache.org</url>
 
   <properties>
