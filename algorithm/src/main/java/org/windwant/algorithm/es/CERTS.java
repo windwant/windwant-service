@@ -114,9 +114,11 @@ public class CERTS {
      * @throws KeyManagementException
      */
     public static SSLSocketFactory getSSLSocketFactory(String keyStorePath, String trustStorePath, String password) throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, KeyManagementException {
+        //秘钥库管理工厂
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         KeyStore keyStore = getKeyStore(keyStorePath, password);
         keyManagerFactory.init(keyStore, password.toCharArray());
+        //信任库管理工厂
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         KeyStore trustStore = getKeyStore(trustStorePath, password);
         trustManagerFactory.init(trustStore);
