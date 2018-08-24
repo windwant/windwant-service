@@ -2,10 +2,10 @@ package org.windwant.algorithm.es;
 
 import org.apache.commons.codec.binary.Base64;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.net.ssl.*;
+import java.io.*;
+import java.net.URL;
+import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.cert.*;
 
@@ -13,9 +13,29 @@ import java.security.cert.*;
  * Created by Administrator on 18-8-24.
  */
 public class CERTS {
+    public static String keyStorePath = "C:/windwant.store";
 
     public static void main(String[] args) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
-        System.out.println(getPublicKey(getCertificate("D:\\tmp\\cert\\windwant.cer")));
+        try {
+            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://127.0.0.1:8443/").openConnection();
+            System.out.println(conn.getContent());
+            SSLSocketFactory sslSocketFactory = getSSLSocketFactory(keyStorePath, keyStorePath, "123456");
+            conn.setSSLSocketFactory(sslSocketFactory);
+            byte[] data = new byte[1024];
+                DataInputStream dis = new DataInputStream(conn.getInputStream());
+            System.out.println(dis.available());
+            int i = 0;
+            ByteBuffer buf = ByteBuffer.allocate(1024 * 9);
+            while ((i = dis.read(data)) != -1)
+                buf.put(data, 0, i);
+            System.out.println(new String(buf.array()));
+            new FileOutputStream("d:/a.html").write(buf.array());
+            conn.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -81,4 +101,28 @@ public class CERTS {
         }
         return null;
     }
+
+    /**
+     * 获取SSLSocketFactory
+     * @param keyStorePath
+     * @param trustStorePath
+     * @param password
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnrecoverableKeyException
+     * @throws KeyStoreException
+     * @throws KeyManagementException
+     */
+    public static SSLSocketFactory getSSLSocketFactory(String keyStorePath, String trustStorePath, String password) throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, KeyManagementException {
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        KeyStore keyStore = getKeyStore(keyStorePath, password);
+        keyManagerFactory.init(keyStore, password.toCharArray());
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        KeyStore trustStore = getKeyStore(trustStorePath, password);
+        trustManagerFactory.init(trustStore);
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
+        return sslContext.getSocketFactory();
+    }
+
 }
