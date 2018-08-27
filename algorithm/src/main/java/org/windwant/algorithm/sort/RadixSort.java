@@ -11,7 +11,6 @@ import java.util.concurrent.ThreadLocalRandom;
  * 基数排序
  * 十个桶
  * 从个位开始，每个数字个位数字对应每个桶数字存放
- * 加入桶中的数字个数大于1个，进行排序
  * 收集分配，排序好的数字
  * 继续处理
  * 十位
