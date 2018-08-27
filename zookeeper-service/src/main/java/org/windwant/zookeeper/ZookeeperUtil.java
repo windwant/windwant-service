@@ -1,13 +1,12 @@
 package org.windwant.zookeeper;
 
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.*;
 import org.apache.zookeeper.ZooDefs.Ids;
-import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.apache.zookeeper.server.auth.DigestAuthenticationProvider;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -92,6 +91,28 @@ public class ZookeeperUtil {
                 zk.close();
             }
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addAuth(ZooKeeper zk, String userName, String passwd){
+        try {
+            zk.addAuthInfo(String.valueOf(Ids.AUTH_IDS), DigestAuthenticationProvider.generateDigest(userName + ":" + passwd).getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+//        try {
+//            ZooKeeper zk = new ZooKeeper("localhost", 2181, null);
+//            addAuth(zk, "roger", "123456");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        try {
+            System.out.println(DigestAuthenticationProvider.generateDigest("roger:123456"));
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }
