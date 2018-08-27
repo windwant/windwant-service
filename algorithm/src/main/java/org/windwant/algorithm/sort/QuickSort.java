@@ -5,6 +5,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 不稳定的排序算法 =交换步骤
+ * 基本原理：
+ *
+ * 选择一个基准元素，调整元素，使左边的都小于基准，右边的都大于基准
+ * 递归的进行子过程
+ *
  * 快速排序法
  * Created by windwant on 2016/12/5.
  */
