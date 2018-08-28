@@ -88,9 +88,35 @@ localhost：证书授予者使用的域名或ip
 [root@zookeeper cert]# openssl x509 -req -days 10000 -sha1 -extfile /etc/pki/tls/openssl.cnf -extensions v3_ca -signkey private/ca.key.pem -in private/ca.csr  -out certs/ca.cer
 x509：签发x509格式证书命令；req：证书输入请求；days：有效期；sha1：证书摘要算法；extfile：配置文件；extensions：添加扩展 使用v3_ca扩展；signkey：自签名秘钥；in：签发申请文件；out：证书文件
 
-生成keystore：
+秘钥库使用两种方式：
+
+>1 证书转换为pkcs12（个人信息交换文件）格式，可以作为秘钥库或者信任库使用： tomcat配置keystoreFile="conf/ca.p12"
+
+[root@zookeeper cert]# openssl pkcs12 -export -cacerts -inkey private/ca.key.pem  -in certs/ca.cer -out certs/ca.p12
+[root@zookeeper cert]# keytool -list -keystore certs/ca.p12   //查看秘钥库信息
+Enter keystore password:
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+1, Aug 28, 2018, PrivateKeyEntry,
+Certificate fingerprint (SHA1): A9:34:42:EE:AC:9C:06:E0:2B:AF:91:64:20:7F:10:FB:0A:40:07:DD
+
+>2 生成keystore：tomcat配置keystoreFile="conf/ca.store"
 
 [root@zookeeper cert]# keytool -genkey -keystore ca.store
+[root@zookeeper cert]# keytool -list -keystore .\windwant.store  //查看秘钥库信息
+输入密钥库口令:
+
+密钥库类型: JKS
+密钥库提供方: SUN
+
+您的密钥库包含 1 个条目
+
+org.windwant.com, 2018-8-28, PrivateKeyEntry,
+证书指纹 (SHA1): CE:CD:6B:07:29:19:77:B1:2B:B6:4C:6B:1E:B5:76:C7:42:E3:08:14
 
 导入openssl生成的证书：
 

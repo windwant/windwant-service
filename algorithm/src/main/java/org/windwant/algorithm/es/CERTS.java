@@ -22,7 +22,7 @@ import java.security.cert.*;
  */
 public class CERTS {
     public static String keyStorePath = "windwant.store";
-    public static String keyStorePathx = "ca.store";
+    public static String keyStorePathx = "ca.p12";
 
     public static void main(String[] args) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         try {
