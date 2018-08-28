@@ -88,6 +88,15 @@ localhost：证书授予者使用的域名或ip
 [root@zookeeper cert]# openssl x509 -req -days 10000 -sha1 -extfile /etc/pki/tls/openssl.cnf -extensions v3_ca -signkey private/ca.key.pem -in private/ca.csr  -out certs/ca.cer
 x509：签发x509格式证书命令；req：证书输入请求；days：有效期；sha1：证书摘要算法；extfile：配置文件；extensions：添加扩展 使用v3_ca扩展；signkey：自签名秘钥；in：签发申请文件；out：证书文件
 
+生成keystore：
+
+[root@zookeeper cert]# keytool -genkey -keystore ca.store
+
+导入openssl生成的证书：
+
+[root@zookeeper cert]# keytool -importcert -trustcacerts -alias localhost -file ca.cer -keystore ca.store
+
+
 配置tomcat：
 
 对于端口8443 添加如下配置：秘钥库路径，密码

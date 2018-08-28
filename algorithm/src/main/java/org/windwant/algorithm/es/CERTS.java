@@ -22,18 +22,22 @@ import java.security.cert.*;
  */
 public class CERTS {
     public static String keyStorePath = "windwant.store";
+    public static String keyStorePathx = "ca.store";
 
     public static void main(String[] args) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         try {
             //使用证书构造https请求
-            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://org.windwant.com:8443/").openConnection();
-            SSLSocketFactory sslSocketFactory = getSSLSocketFactory(keyStorePath, keyStorePath, "123456");
+//            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://org.windwant.com:8443/").openConnection();
+//            SSLSocketFactory sslSocketFactory = getSSLSocketFactory(keyStorePath, keyStorePath, "123456");
+
+            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://localhost:8443/").openConnection();
+            SSLSocketFactory sslSocketFactory = getSSLSocketFactory(keyStorePathx, keyStorePathx, "123456");
             conn.setSSLSocketFactory(sslSocketFactory);
             byte[] data = new byte[1024];
             DataInputStream dis = new DataInputStream(conn.getInputStream());
             System.out.println(dis.available());
             int i = 0;
-            OutputStream out = new FileOutputStream("d:/a.html");
+            OutputStream out = new FileOutputStream("algorithm/index.html");
             while ((i = dis.read(data)) != -1)
                 out.write(data, 0, i);
             conn.disconnect();
