@@ -5,32 +5,40 @@ import org.apache.commons.codec.binary.Base64;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.cert.*;
 
 /**
+ *
+ * tomcat server.xml
+ *  <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+ *    maxThreads="150" SSLEnabled="true" sslProtocal="TLS" keystoreFile="conf/windwant.store" keystorePass="123456">
+ *    <!-- <SSLHostConfig>
+ *    <Certificate certificateKeystoreFile="D:/tmp/cert/windwant.cer"
+ *    type="RSA" />
+ *    </SSLHostConfig> -->
+ *  </Connector>
  * Created by Administrator on 18-8-24.
  */
 public class CERTS {
-    public static String keyStorePath = "C:/windwant.store";
+    public static String keyStorePath = "windwant.store";
 
     public static void main(String[] args) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         try {
-            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://127.0.0.1:8443/").openConnection();
-            System.out.println(conn.getContent());
+            //使用证书构造https请求
+            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://org.windwant.com:8443/").openConnection();
             SSLSocketFactory sslSocketFactory = getSSLSocketFactory(keyStorePath, keyStorePath, "123456");
             conn.setSSLSocketFactory(sslSocketFactory);
             byte[] data = new byte[1024];
-                DataInputStream dis = new DataInputStream(conn.getInputStream());
+            DataInputStream dis = new DataInputStream(conn.getInputStream());
             System.out.println(dis.available());
             int i = 0;
-            ByteBuffer buf = ByteBuffer.allocate(1024 * 9);
+            OutputStream out = new FileOutputStream("d:/a.html");
             while ((i = dis.read(data)) != -1)
-                buf.put(data, 0, i);
-            System.out.println(new String(buf.array()));
-            new FileOutputStream("d:/a.html").write(buf.array());
+                out.write(data, 0, i);
             conn.disconnect();
+            out.flush();
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (KeyManagementException e) {
@@ -84,7 +92,7 @@ public class CERTS {
      * @return
      */
     public static KeyStore getKeyStore(String path, String password) {
-        try(InputStream in = new FileInputStream(path)) {
+        try(InputStream in = CERTS.class.getClassLoader().getResourceAsStream(path)) {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(in, password.toCharArray());
             return keyStore;
