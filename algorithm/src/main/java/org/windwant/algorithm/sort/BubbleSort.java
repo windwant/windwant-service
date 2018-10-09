@@ -9,7 +9,11 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BubbleSort {
 
-    public static void bubbleSort(int[] arr){
+    /**
+     * 大数后移 升序排序
+     * @param arr
+     */
+    public static void bubbleSortAsc(int[] arr){
         int lgn = arr.length;
         for (int i = 0; i < lgn - 1; i++) {
             for (int j = 0; j < lgn - 1 - i; j++) {
@@ -22,6 +26,23 @@ public class BubbleSort {
         }
     }
 
+    /**
+     * 大数前移 降序排序
+     * @param arr
+     */
+    public static void bubbleSortDesc(int[] arr){
+        int lgn = arr.length;
+        for (int i = 0; i < lgn; i++) {
+            for (int j = i; j < arr.length; j++) {
+                if(arr[j] > arr[i]){
+                    int tmp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = tmp;
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("Hello BubbleSort");
         int[] arr = new int[20];
@@ -29,7 +50,9 @@ public class BubbleSort {
             arr[i] = ThreadLocalRandom.current().nextInt(100);
         }
         System.out.println("before: " + Arrays.toString(arr));
-        bubbleSort(arr);
-        System.out.println(" after: " + Arrays.toString(arr));
+        bubbleSortAsc(arr);
+        System.out.println("ASC: " + Arrays.toString(arr));
+        bubbleSortDesc(arr);
+        System.out.println("DESC: " + Arrays.toString(arr));
     }
 }
