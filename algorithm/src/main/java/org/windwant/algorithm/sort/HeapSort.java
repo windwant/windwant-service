@@ -37,6 +37,7 @@ public class HeapSort {
 
     /**
      * 构建小顶堆
+     * 子节点 >= 父节点 a[i] <= a[2i + 1] a[i] <= a[2i + 2]
      * @param arr
      * @param arr
      */
@@ -75,6 +76,7 @@ public class HeapSort {
 
     /**
      * 构建大顶堆
+     * 子节点 <= 父节点  a[i] >= a[2i + 1] a[i] >= a[2i + 2]
      * @param arr
      * @param arr
      */

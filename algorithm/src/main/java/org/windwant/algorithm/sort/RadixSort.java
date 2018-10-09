@@ -33,7 +33,7 @@ public class RadixSort {
         //分别处理不同位数 存放 处理
         for (int i = 0; i < maxBit; i++) {
             for (int j = 0; j < arr.length; j++) {
-                int ivalue = (int) (arr[j] % Math.pow(10, i + 1) / Math.pow(10, i)); //去相应位数上的数字作为 存入bulk index
+                int ivalue = (int) (arr[j] % Math.pow(10, i + 1) / Math.pow(10, i)); //取相应位数上的数字作为 存入bulk index
                 bulk[ivalue].offer(arr[j]);
             }
 
