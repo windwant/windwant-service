@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class AIOClient implements Runnable{
 
-    private AsynchronousChannelGroup group;
+    private AsynchronousChannelGroup group;   //异步通道组 封装处理异步通道的网络IO操作
     private String host;
     private int port;
     public AIOClient(String host, int port) {
@@ -26,7 +26,7 @@ public class AIOClient implements Runnable{
     private void initGroup(){
         if(group == null) {
             try {
-                group = AsynchronousChannelGroup.withCachedThreadPool(Executors.newFixedThreadPool(5), 5);
+                group = AsynchronousChannelGroup.withCachedThreadPool(Executors.newFixedThreadPool(5), 5); //使用固定线程池实例化组
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -36,7 +36,9 @@ public class AIOClient implements Runnable{
 
     private void send(){
         try {
+            //异步流式socket通道 open方法创建 并绑定到组 group
             final AsynchronousSocketChannel client = AsynchronousSocketChannel.open(group);
+            //连接
             client.connect(new InetSocketAddress(host, port), null, new CompletionHandler<Void, Object>() {
                 public void completed(Void result, Object attachment) {
                     String msg = "client test msg-" + Math.random();
@@ -46,7 +48,6 @@ public class AIOClient implements Runnable{
                     final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                     client.read(byteBuffer, this, new CompletionHandler<Integer, Object>() {
                         public void completed(Integer result, Object attachment) {
-                            System.out.println(result);
                             System.out.println(Thread.currentThread().getName() + " client read data: " + new String(byteBuffer.array()));
                             try {
                                 byteBuffer.clear();
@@ -74,6 +75,11 @@ public class AIOClient implements Runnable{
     public void run() {
         for (int i = 0; i < 100; i++) {
             send();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

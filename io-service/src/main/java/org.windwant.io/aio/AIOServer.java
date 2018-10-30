@@ -10,6 +10,7 @@ import java.nio.channels.CompletionHandler;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * AsynchronousServerSocketChannel
@@ -46,17 +47,23 @@ public class AIOServer implements Runnable{
                 final ByteBuffer echoBuffer = ByteBuffer.allocateDirect(1024);
 
                 public void completed(AsynchronousSocketChannel result, AIOServer attachment) {
-                    System.out.println("reading begin...");
+                    System.out.println("==============================================================");
+                    System.out.println("server process begin ...");
                     try {
-                        System.out.println("远程地址：" + result.getRemoteAddress());
+                        System.out.println("client host: " + result.getRemoteAddress());
                         echoBuffer.clear();
                         result.read(echoBuffer).get();
                         echoBuffer.flip();
-                        Thread.sleep(1000);
                         System.out.println("received : " + Charset.defaultCharset().decode(echoBuffer));
+
+                        int random = ThreadLocalRandom.current().nextInt(5);
+                        printProcess(random);
+                        System.out.println("server deal request execute: " + random + "s");
+
                         String msg = "server test msg-" + Math.random();
                         System.out.println("server send data: " + msg);
                         result.write(ByteBuffer.wrap(msg.getBytes()));
+                        System.out.println("server process end ...");
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -78,6 +85,16 @@ public class AIOServer implements Runnable{
             System.in.read();
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    private void printProcess(int s) throws InterruptedException {
+        String dot = "";
+        for (int i = 0; i < s; i++) {
+            Thread.sleep(1000);
+            dot += ".";
+            System.out.println(dot);
+
         }
     }
 
