@@ -9,7 +9,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
-
 import java.util.Date;
 
 /**
@@ -72,7 +71,7 @@ class TimeServerHandler extends ChannelHandlerAdapter{
 //        currentTime = currentTime + separator;
         currentTime = currentTime + label;
         ByteBuf resp = Unpooled.copiedBuffer(currentTime.getBytes());
-        ctx.write(resp);
+        ctx.writeAndFlush(resp);
     }
 
     @Override

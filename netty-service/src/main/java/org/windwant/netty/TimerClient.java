@@ -10,6 +10,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -25,7 +29,8 @@ public class TimerClient {
         try {
             Bootstrap b = new Bootstrap();
             b.group(group).channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.TCP_NODELAY, Boolean.TRUE)
+                    .option(ChannelOption.AUTO_READ, Boolean.TRUE) //自动读取消息
                     .handler(new childHandler());
 
             ChannelFuture cf = b.connect(host, port).sync();
@@ -72,14 +77,19 @@ class TimeClientHandler extends ChannelHandlerAdapter{
         req = order.getBytes();
     }
 
+    ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ByteBuf firstMessager;
-        for (int i = 0; i < 100; i++) {
-            firstMessager = Unpooled.buffer(req.length);
-            firstMessager.writeBytes(req);
-            ctx.writeAndFlush(firstMessager);
-        }
+        service.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                ByteBuf firstMessager;
+                firstMessager = Unpooled.buffer(req.length);
+                firstMessager.writeBytes(req);
+                ctx.writeAndFlush(firstMessager);
+            }
+        }, 0, 1, TimeUnit.SECONDS);
     }
 
     @Override
