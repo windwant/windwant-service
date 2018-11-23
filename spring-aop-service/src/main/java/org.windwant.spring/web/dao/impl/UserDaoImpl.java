@@ -14,4 +14,10 @@ public class UserDaoImpl extends TBaseDaoImpl implements UserDao {
     public User getUserById(int id) {
         return hibernateTemplate.get(User.class, id);
     }
+
+    @Override
+    public User insertUser(User user) {
+        hibernateTemplate.saveOrUpdate(user);
+        return user;
+    }
 }

@@ -9,4 +9,6 @@ import org.windwant.spring.web.entity.User;
 public interface UserDao extends TBaseDao {
 
     User getUserById(int id);
+
+    User insertUser(User user);
 }

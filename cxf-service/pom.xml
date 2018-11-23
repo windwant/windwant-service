@@ -9,7 +9,7 @@
   <url>http://maven.apache.org</url>
 
   <properties>
-    <cxf.version>3.1.4</cxf.version>
+    <cxf.version>3.1.16</cxf.version>
     <jackson.version>2.4.1</jackson.version>
   </properties>
 

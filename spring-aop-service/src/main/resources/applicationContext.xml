@@ -51,7 +51,7 @@
         </aop:aspect>
     </aop:config>
 
-    <bean id="transactionMgr" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <bean id="transactionMgr" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
@@ -98,7 +98,7 @@
         <property name="maxWaitMillis" value="${jdbc.maxWait}"></property>
     </bean>
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="org.windwant.spring.web.entity"/>
         <!-- 定义Hibernate的SessionFactory的属性 -->
@@ -132,7 +132,7 @@
         </property>
     </bean>
 
-    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 

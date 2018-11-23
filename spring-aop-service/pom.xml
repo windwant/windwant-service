@@ -5,8 +5,14 @@
   <artifactId>spring-aop-service</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>code Maven Webapp</name>
+  <name>spring-aop-service</name>
   <url>http://maven.apache.org</url>
+
+  <properties>
+    <spring.version>5.1.2.RELEASE</spring.version>
+    <hibernate.version>5.3.7.Final</hibernate.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -18,12 +24,12 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>
@@ -39,7 +45,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
@@ -66,7 +72,7 @@
     <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>fastjson</artifactId>
-      <version>1.2.8</version>
+      <version>1.2.53</version>
     </dependency>
 
     <dependency>
@@ -77,7 +83,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>4.3.7.Final</version>
+      <version>${hibernate.version}</version>
     </dependency>
 
     <!--<dependency>-->
@@ -89,7 +95,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-ehcache</artifactId>
-      <version>4.3.11.Final</version>
+      <version>${hibernate.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -117,13 +123,19 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
       <version>1.3.8.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.9.7</version>
+    </dependency>
+
     <!--<dependency>-->
       <!--<groupId>com.fasterxml.jackson.core</groupId>-->
       <!--<artifactId>jackson-core</artifactId>-->

@@ -75,4 +75,15 @@ public class User implements Serializable{
     @OrderBy("id")
     @Transient
     List<Book> bookList;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", passwd='" + passwd + '\'' +
+                ", sex='" + sex + '\'' +
+                ", bookList=" + bookList +
+                '}';
+    }
 }
