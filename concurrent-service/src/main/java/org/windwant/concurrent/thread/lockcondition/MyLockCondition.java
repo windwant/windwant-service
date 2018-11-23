@@ -39,13 +39,13 @@ public class MyLockCondition{
                     while(queue.size() == 0){
                         try {
                             System.out.println("队列空，等待数据");
-                            notEmpty.await();
+                            notEmpty.await(); //此时 notFull 条件活跃，notEmpty 则挂起
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                     queue.poll();                //每次移走队首元素
-                    notFull.signal();
+                    notFull.signal(); //取走一个元素后，队列不满，则唤醒 notFull条件，使生产者可以向队列添加元素
                     System.out.println("从队列取走一个元素，队列剩余"+queue.size()+"个元素");
                 } finally{
                     lock.unlock();
@@ -68,13 +68,13 @@ public class MyLockCondition{
                     while(queue.size() == queueSize){
                         try {
                             System.out.println("队列满，等待有空余空间");
-                            notFull.await();
+                            notFull.await(); //此时 notEmpty 条件活跃，notFull 则挂起
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                     queue.offer(1);        //每次插入一个元素
-                    notEmpty.signal();
+                    notEmpty.signal(); //插入一个元素后，则队列不空，唤醒 notEmpty 条件，消费者可以从队列中获取元素消费
                     System.out.println("向队列取中插入一个元素，队列剩余空间："+(queueSize-queue.size()));
                 } finally{
                     lock.unlock();

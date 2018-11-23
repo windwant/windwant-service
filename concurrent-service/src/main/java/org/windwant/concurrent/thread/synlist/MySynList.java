@@ -11,6 +11,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 自定义同步List
  * Created by windwant on 2016/12/1.
  */
 public class MySynList {
@@ -61,6 +62,7 @@ public class MySynList {
         }
     }
 
+    //自定义同步List
     static class SynList{
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition has = lock.newCondition();

@@ -17,6 +17,7 @@ public class MyPipedCommunication {
         PipedOutputStream pp = p.getOut();
         PipedInputStream ppi = c.getIn();
         try {
+            //一个线程的 in 连接另外一个 out
             pp.connect(ppi);
         } catch (IOException e) {
             e.printStackTrace();

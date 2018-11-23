@@ -1,4 +1,4 @@
-package org.windwant.concurrent.thread.excutor;
+package org.windwant.concurrent.thread.executor;
 import java.util.TimerTask;
 
 public class MyTimerTask extends TimerTask{

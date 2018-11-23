@@ -15,6 +15,7 @@ public class Consumer extends Thread {
         return in;
     }
 
+    //consumer 接收
     PipedInputStream in = new PipedInputStream();;
 
     private void consume() {

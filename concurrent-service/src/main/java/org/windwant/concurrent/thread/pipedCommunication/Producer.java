@@ -12,6 +12,7 @@ public class Producer extends Thread {
         produce();
     }
 
+    //producer out输出
     PipedOutputStream out = new PipedOutputStream();;
 
     private void produce() {

@@ -1,10 +1,9 @@
-package org.windwant.concurrent.thread.excutor;
+package org.windwant.concurrent.thread.executor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
