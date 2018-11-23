@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration monitorInterval="30">
     <Properties>
-        <Property name="log-path">${log.path}</Property>
-        <Property name="log-level">${log.level}</Property>
+        <Property name="log-path">elasticjob-service/logs</Property>
+        <Property name="log-level">info</Property>
     </Properties>
 
     <Appenders>

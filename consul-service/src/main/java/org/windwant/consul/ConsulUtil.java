@@ -9,11 +9,11 @@ import java.util.Map;
 /**
  * Created by windwant on 2016/8/19.
  */
-public class ConsulSpringMgr {
+public class ConsulUtil {
     private static ConsulClient consulClient;
 
     static {
-        ConsulRawClient client = new ConsulRawClient("192.168.7.162", 8500);
+        ConsulRawClient client = new ConsulRawClient("localhost", 8500);
         consulClient = new ConsulClient(client);
     }
 
