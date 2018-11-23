@@ -1,5 +1,5 @@
-# rocketmq
-rocketmq
+# rocketmq-service
+
 
 Clone & Build
 > git clone -b develop https://github.com/apache/rocketmq.git

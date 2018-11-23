@@ -1,4 +1,4 @@
-# netty-test
+# netty-service
 
 1. websocket 应用实例，websocket服务端server，websocket测试请求页面 html。
 

@@ -1,3 +1,3 @@
-# spring-oxm-test
+# spring-oxm-service
 
 spring-oxm ²Ù×÷ xml

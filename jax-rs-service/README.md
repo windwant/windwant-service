@@ -1,3 +1,3 @@
-# jax-rs-test
+# jax-rs-service
 
 jersey RESTful

@@ -1,4 +1,4 @@
-# elasticjob
+# elasticjob-service
 
 当当 elastic job 应用测试项目
 

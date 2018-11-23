@@ -1,4 +1,4 @@
-# zookeeper-demo
+# zookeeper-service
 
 zookeeper：服务协调管理工具
 

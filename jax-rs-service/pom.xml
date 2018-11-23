@@ -5,7 +5,7 @@
   <artifactId>jax-rs-service</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>jax-rs Maven Webapp</name>
+  <name>jax-rs-service</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
