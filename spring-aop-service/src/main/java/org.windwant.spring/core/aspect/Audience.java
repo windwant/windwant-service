@@ -21,6 +21,8 @@ import org.windwant.spring.web.service.impl.PerformerCallHelpImpl;
 @Component("aspect")
 @Aspect
 public class Audience {
+
+    //ÉùÃ÷¶¨ÒåPointCut
     @Pointcut( "execution(* org.windwant.spring.web.service.impl.APerformer.perform(..))")
     public void performance(){}
 

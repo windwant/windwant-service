@@ -1,5 +1,8 @@
 package org.windwant.spring.core.proxy;
 
+import org.windwant.spring.web.service.Performer;
+import org.windwant.spring.web.service.impl.APerformer;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -7,7 +10,7 @@ import java.lang.reflect.Proxy;
 /**
  * Created by windwant on 2016/6/4.
  */
-public class MyJDKProxy implements InvocationHandler{
+public class JDKProxyInvocationHandler implements InvocationHandler{
     private Object targetObject;
     public Object getInstance(Object targetObject){
         this.targetObject = targetObject;
@@ -19,5 +22,11 @@ public class MyJDKProxy implements InvocationHandler{
         Object resutl = method.invoke(targetObject, args);
         System.out.println("proxy: after action");
         return resutl;
+    }
+
+    public static void main(String[] args) {
+        JDKProxyInvocationHandler mp = new JDKProxyInvocationHandler();
+        Performer ap = (Performer) mp.getInstance(new APerformer());
+        System.out.println(ap.perform("fadfasd"));
     }
 }

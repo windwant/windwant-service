@@ -5,5 +5,5 @@ package org.windwant.spring.core.hibernate;
  */
 public interface TBaseDao {
 
-    public Object get(Class entiyClass, int id);
+    Object get(Class entiyClass, int id);
 }
