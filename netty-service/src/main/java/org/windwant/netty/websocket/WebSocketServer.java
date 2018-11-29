@@ -33,8 +33,11 @@ public class WebSocketServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            //A combination of HttpRequestDecoder HttpResponseEncoder which enables easier server side HTTP implementation.
                             ch.pipeline().addLast("http-codec", new HttpServerCodec());
+                            //deal chunked message
                             ch.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
+                            //adds support for writing a large data stream
                             ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
                             ch.pipeline().addLast("websockethandler", new WebSocketServerHandler());
                         }

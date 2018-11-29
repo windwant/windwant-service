@@ -5,6 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
@@ -31,8 +32,10 @@ public class SubreqServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            //接收 ByteBuf 转换为 java 对象
                             ch.pipeline().addLast(new ObjectDecoder(1024*1024,
                                     ClassResolvers.weakCachingConcurrentResolver(this.getClass().getClassLoader())));
+                            //将 java 对象序列化为 ByteBuf
                             ch.pipeline().addLast(new ObjectEncoder());
                             ch.pipeline().addLast(new SubReqServerHandler());
                         }

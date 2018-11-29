@@ -32,9 +32,13 @@ public class SubreqProtoServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            //根据 消息中的 Google Protocol Buffers 长度字段 切分消息
                             ch.pipeline().addLast(new ProtobufVarint32FrameDecoder());
+                            //将 ByteBuf 转换为 Google Protocol Buffers  Message  MessageLite
                             ch.pipeline().addLast(new ProtobufDecoder(SubscripReqProto.SubscribReq.getDefaultInstance()));
+                            //添加 Google Protocol Buffers 长度字段
                             ch.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
+                            //将 Google Protocol Buffers Message  MessageLite 转换为 ByteBuf
                             ch.pipeline().addLast(new ProtobufEncoder());
                             ch.pipeline().addLast(new SubReqProtoServerHandler());
                         }

@@ -40,7 +40,9 @@ public class SubreqClient {
         private static final String label = "$";
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
+            //接收 ByteBuf 转换为 java 对象
             ch.pipeline().addLast(new ObjectDecoder(1024, ClassResolvers.cacheDisabled(this.getClass().getClassLoader())));
+            //将 java 对象序列化为 ByteBuf
             ch.pipeline().addLast(new ObjectEncoder());
             ch.pipeline().addLast(new SubreqClientHandler());
         }

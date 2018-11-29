@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 /**
  * HttpFileServer 文件服务器，文件目录及下载
- * 测试请求：http://localhost:8888/netty-demo/src/
+ * 测试请求：浏览器访问 http://localhost:8888/netty-service/src/
  */
 public class HttpFileServer {
 
@@ -59,12 +59,13 @@ public class HttpFileServer {
     }
 
     public static void main(String[] args) {
-        new HttpFileServer().run(8888, "/netty-demo/src/");
+        new HttpFileServer().run(8888, "/netty-service/src/");
     }
 }
 
 class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>{
 
+    //限定可访问目录
     private final String url;
 
     HttpFileServerHandler(String url){
@@ -81,13 +82,18 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         }
         System.out.println("decoded result: " + msg.getDecoderResult().isSuccess());
 
-        //supported method GET
+        //只支持 GET 方法
         if(msg.getMethod() != HttpMethod.GET){
             sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
             return;
         }
 
         System.out.println("request method: " + msg.getMethod());
+
+        //处理末尾
+        if(msg.getUri().endsWith("?")){
+            msg.setUri(msg.getUri().substring(0, msg.getUri().lastIndexOf("?")));
+        }
 
         final String path = dealUrl(msg.getUri());
         if(path == null){
@@ -104,8 +110,9 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
             return;
         }
 
+        //访问文件夹，返回文件夹下文件列表
         if(file.isDirectory()){
-            if(msg.getUri().endsWith("/")){//访问文件夹，返回文件夹下文件列表
+            if(msg.getUri().endsWith("/")){
                 sendListing(ctx, file);
             }else{//访问文件 返回重定向response
                 sendRedirect(ctx, msg.getUri() + "/");
@@ -114,7 +121,7 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
             return;
         }
 
-        //进入文件下载处理
+        //访问文件，则进入文件下载处理
         if(!file.isFile()){
             sendError(ctx, HttpResponseStatus.FORBIDDEN);
             return;
@@ -132,12 +139,14 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, fl); //CONTENT_LENGTH
         setContentTypeHeader(response, file);
+        //请求消息通道 keepalive 判断
         if(HttpHeaders.isKeepAlive(msg)){ //下载文件必须设置
             response.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
         }
+        //先写头信息
         ctx.write(response);
         ChannelFuture sendFuture = null;
-        //发送文件  ChunkedInput that fetches data from a file chunk by chunk
+        //发送文件 写文件信息  ChunkedInput that fetches data from a file chunk by chunk
         sendFuture = ctx.write(new ChunkedFile(randomAccessFile, 0, fl, 8192), ctx.newProgressivePromise());
         //发送进度监听
         sendFuture.addListener(new ChannelProgressiveFutureListener(){
@@ -175,6 +184,7 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
      */
     private String dealUrl(String uri){
         try {
+            //解码
             uri = URLDecoder.decode(uri, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             try {
@@ -188,6 +198,7 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         if(!uri.startsWith(url) || !uri.startsWith("/")){
             return null;
         }
+
         uri = uri.replace("/", File.separator);
         if(uri.contains(File.separator + ".")
                 || uri.contains("." + File.separator)
@@ -203,7 +214,7 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
     private static final Pattern ALLOWED_FILE_PATTERN = Pattern.compile("[A-Za-z0-9][-_A-Za-z0-9\\.]*]");
 
     /**
-     * 文件列表page
+     * 构造文件列表页面 page view
      * @param ctx
      * @param dir
      */
@@ -214,15 +225,19 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         StringBuilder sb = new StringBuilder();
         String dirPath = dir.getPath();
         sb.append("<!DOCTYPE html>\r\n");
-        sb.append("<html><head><title>");
+        sb.append("<html>");
+        sb.append("<head>");
+        sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+        sb.append("<title>");
         sb.append(dirPath);
-        sb.append("目录：");
-        sb.append("</title></head><body>\r\n");
+        sb.append("</title>");
+        sb.append("</head>");
+        sb.append("<body>\r\n");
         sb.append("<h3>");
-        sb.append(dirPath).append(" 目录：");
+        sb.append(dirPath).append(" directory: ");
         sb.append("</h3>\r\n");
         sb.append("<ul>");
-        sb.append("<li>链接：<a href=\"../\"></a></li>\r\n");
+        sb.append("<li>ref: <a href=\"../\"></a></li>\r\n");
         for(File f:dir.listFiles()){
             if(f.isHidden() || !f.canRead()){
                 continue;
@@ -231,13 +246,15 @@ class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
             if(ALLOWED_FILE_PATTERN.matcher(name).matches()){
                 continue;
             }
-            sb.append("<li>链接：<a href=\"");
+            sb.append("<li>ref: <a href=\"");
             sb.append(name);
             sb.append("\">");
             sb.append(name);
             sb.append("</a></li>\r\n");
         }
-        sb.append("</ul></body></html>");
+        sb.append("</ul>");
+        sb.append("</body>");
+        sb.append("</html>");
 
         System.out.println("return: " + sb.toString());
 

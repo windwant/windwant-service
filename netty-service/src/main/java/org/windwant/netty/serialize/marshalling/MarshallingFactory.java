@@ -10,6 +10,7 @@ import org.jboss.marshalling.MarshallingConfiguration;
  */
 public class MarshallingFactory {
 
+    //marshalling 解码
     public static MarshallingDecoder getMarshallingDecoder(){
         final MarshallerFactory marshallerFactory = Marshalling.getProvidedMarshallerFactory("serial");
         final MarshallingConfiguration config = new MarshallingConfiguration();
@@ -17,6 +18,8 @@ public class MarshallingFactory {
         UnmarshallerProvider un = new DefaultUnmarshallerProvider(marshallerFactory, config);
         return new MarshallingDecoder(un);
     }
+
+    //marshalling 编码
     public static MarshallingEncoder getMarshallingEncoder(){
         final MarshallerFactory marshallerFactory = Marshalling.getProvidedMarshallerFactory("serial");
         final MarshallingConfiguration config = new MarshallingConfiguration();

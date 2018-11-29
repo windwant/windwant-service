@@ -3,6 +3,7 @@ package org.windwant.netty.serialize;
 import java.io.Serializable;
 
 /**
+ * 回复对象
  * SubscribResp
  */
 public class SubscribResp implements Serializable {

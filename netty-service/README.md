@@ -16,3 +16,7 @@
 
 7. time server client 实例
 
+8. java 序列化应用
+
+9. Telnet 服务器应用
+
