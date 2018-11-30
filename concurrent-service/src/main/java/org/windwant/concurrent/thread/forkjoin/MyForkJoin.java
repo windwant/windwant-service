@@ -24,7 +24,8 @@ public class MyForkJoin {
     }
 
     public static void testFibonacci(){
-        System.out.println(new ForkJoinPool().invoke(new Fibonacci(30)));
+//        System.out.println(new ForkJoinPool().invoke(new Fibonacci(5)));
+        System.out.println(new ForkJoinPool().invoke(new FibonacciArray(30)));
     }
 
     /**
