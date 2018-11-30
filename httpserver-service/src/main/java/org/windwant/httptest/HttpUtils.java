@@ -1,6 +1,8 @@
 package org.windwant.httptest;
 
 import org.apache.http.*;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -15,10 +17,12 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -29,7 +33,10 @@ import java.net.URISyntaxException;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.Charset;
 import java.security.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -211,5 +218,61 @@ public class HttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static String formPost(String url, Map<String, String> paramPairs) {
+        // 模拟表单
+        List<NameValuePair> params = new ArrayList();
+        paramPairs.entrySet().forEach(item -> params.add(new BasicNameValuePair(item.getKey(), item.getValue())));
+        UrlEncodedFormEntity entity = null;
+        try {
+            entity = new UrlEncodedFormEntity(params, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        HttpPost post = new HttpPost(url);
+        post.setEntity(entity);
+        String result = "";
+        try (CloseableHttpResponse response = HttpUtils.getClient().execute(post)){
+            System.out.println(response.getStatusLine());
+            HttpEntity e = response.getEntity();
+            result = EntityUtils.toString(e);
+            EntityUtils.consume(e);
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            closeHttp(null, post, null, null);
+        }
+        return result;
+    }
+
+    private static void closeHttp(CloseableHttpClient client, HttpPost httpPost, HttpGet httpGet, CloseableHttpResponse response){
+        try {
+            if(null != client) {
+                client.close();
+            }
+            if(null != httpPost) {
+                httpPost.releaseConnection();
+            }
+            if(null != httpGet) {
+                httpGet.releaseConnection();
+            }
+            if(null != response) {
+                response.close();
+            }
+        } catch (IOException e) {
+            System.out.println("post error: " + e);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(formPost("http://yongchetest.aachuxing.com//v3/tripshare/show",
+                new HashMap() {{
+                    put("order_id", "1811270650122");
+                    put("user_id", "771252");
+                }}));
     }
 }
