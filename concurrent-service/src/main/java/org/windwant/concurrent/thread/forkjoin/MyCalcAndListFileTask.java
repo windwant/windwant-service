@@ -56,7 +56,7 @@ public class MyCalcAndListFileTask extends RecursiveTask<Map<String, List<String
 //                num += mtask.join();
 //            }
 
-            for(MyCalcAndListFileTask mtask: invokeAll(taskList)){ //invokeAll() 返回ForkJoinTask集合 fork() 把任务加入workqueue
+            for(MyCalcAndListFileTask mtask: invokeAll(taskList)){ //invokeAll() 返回ForkJoinTask集合 所有任务执行 fork() 把任务加入workqueue
                 files.putAll(mtask.join());
             }
         }

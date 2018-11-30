@@ -10,12 +10,21 @@ import java.util.concurrent.ForkJoinPool;
  * RecursiveTask 带返回值的ForkJoinTask
  * RecursiveAction 不带返回值的ForkJoinTask
  *
+ * 编写Task：计算并返回结果；继续分解任务，添加到执行队列，并等待聚合返回结果
+ *
+ * fork: 将任务放入待执行队列
+ * join: 获取任务，等待执行完成，获取结果
+ *
  * Created by windwant on 2016/6/3.
  */
 public class MyForkJoin {
 
     public static void main(String[] args) {
-        testCalcAndListFileNum();
+        testFibonacci();
+    }
+
+    public static void testFibonacci(){
+        System.out.println(new ForkJoinPool().invoke(new Fibonacci(30)));
     }
 
     /**
