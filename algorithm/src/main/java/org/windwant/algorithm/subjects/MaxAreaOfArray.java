@@ -40,12 +40,13 @@ public class MaxAreaOfArray {
     }
 
     public static void main(String[] args) {
+        MaxAreaOfArray maxAreaOfArray = new MaxAreaOfArray();
         int[] arr = {1,8,6,2,5,4,8,3,7};
         long t = System.nanoTime();
-        System.out.println(new MaxAreaOfArray().maxArea(arr));
+        System.out.println(maxAreaOfArray.maxArea(arr));
         System.out.println("maxArea use time: " + (System.nanoTime() - t));
         t = System.nanoTime();
-        System.out.println(new MaxAreaOfArray().maxArea2(arr));
+        System.out.println(maxAreaOfArray.maxArea2(arr));
         System.out.println("maxArea: use time: " + (System.nanoTime() - t));
     }
 }
