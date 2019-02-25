@@ -14,10 +14,26 @@ public class MaxAreaOfArray {
 
         for (int i = 0; i < lgn; i++) {
             for (int i1 = i + 1; i1 < lgn; i1++) {
-                int h = height[i]>height[i1]?height[i1]:height[i];
-                if(h*(i1 - i) > area){
-                    area = h*(i1 - i);
+                int tmpArea = (height[i]>height[i1]?height[i1]:height[i]) * (i1 - i);
+                if(tmpArea > area){
+                    area = tmpArea;
                 }
+            }
+        }
+        return area;
+    }
+
+    public int maxArea2(int[] height) {
+        int area = 0, lgn = height.length;
+        if(lgn < 2) return 0;
+
+        for (int i = 0, j = lgn - 1; i < j; ) {
+            int tmpArea = (height[i]>height[j]?height[j]:height[i]) * Math.abs(j - i);
+            if(tmpArea > area){
+                area = tmpArea;
+                i++;//正方向前进一步，避免反方向遍历时，重复比较
+            }else {
+                j--;//反方向前进一步，避免正方向遍历时，重复比较
             }
         }
         return area;
@@ -25,6 +41,11 @@ public class MaxAreaOfArray {
 
     public static void main(String[] args) {
         int[] arr = {1,8,6,2,5,4,8,3,7};
+        long t = System.nanoTime();
         System.out.println(new MaxAreaOfArray().maxArea(arr));
+        System.out.println("maxArea use time: " + (System.nanoTime() - t));
+        t = System.nanoTime();
+        System.out.println(new MaxAreaOfArray().maxArea2(arr));
+        System.out.println("maxArea: use time: " + (System.nanoTime() - t));
     }
 }
