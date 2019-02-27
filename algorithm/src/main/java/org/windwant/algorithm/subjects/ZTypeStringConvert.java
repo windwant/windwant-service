@@ -39,7 +39,7 @@ public class ZTypeStringConvert {
      * @param numRows
      * @return
      */
-    public String convert(String s, int numRows) {
+    public static String convert(String s, int numRows) {
         if(numRows == 1){
             return s;
         }
@@ -85,6 +85,6 @@ public class ZTypeStringConvert {
     public static void main(String[] args) {
         String s = "LEETCODEISHIRING";
         int numRows = 4;
-        System.out.println(new ZTypeStringConvert().convert(s, numRows));
+        System.out.println(ZTypeStringConvert.convert(s, numRows));
     }
 }

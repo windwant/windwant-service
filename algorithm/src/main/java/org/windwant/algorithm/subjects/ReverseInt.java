@@ -12,7 +12,7 @@ public class ReverseInt {
      * @param x
      * @return
      */
-    public int reverse(int x) {
+    public static int reverse(int x) {
         double result = 0;
         while (x != 0){
             result = result * 10 + x%10;
@@ -25,6 +25,6 @@ public class ReverseInt {
     }
 
     public static void main(String[] args) {
-        System.out.println(new ReverseInt().reverse(321));
+        System.out.println(ReverseInt.reverse(321));
     }
 }

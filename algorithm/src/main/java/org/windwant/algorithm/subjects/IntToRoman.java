@@ -23,7 +23,7 @@ package org.windwant.algorithm.subjects;
  */
 public class IntToRoman {
 
-    public String intToRoman(int num) {
+    public static String intToRoman(int num) {
         if(num > 3999) return "";
         if(num/1000 > 0){
             return dealQianWei(num);
@@ -36,11 +36,11 @@ public class IntToRoman {
         }
     }
 
-    public String dealQianWei(int num){
+    public static String dealQianWei(int num){
         return countStr(num/1000, "M") + dealBaiWei(num%1000);
     }
 
-    public String dealBaiWei(int num){
+    public static String dealBaiWei(int num){
         int bc = num/100;
         if(bc == 9) return "CM" + dealShiWei(num % 100);
         if(bc == 4) return "CD" + dealShiWei(num % 100);
@@ -49,7 +49,7 @@ public class IntToRoman {
         return countStr(fbc, "D") + countStr(num/100, "C") + dealShiWei(num%100);
     }
 
-    public String dealShiWei(int num){
+    public static String dealShiWei(int num){
         int tens = num/10;
         if(tens == 9) return "XC" + dealGeWei(num % 10);
         if(tens == 4) return "XL" + dealGeWei(num % 10);
@@ -58,14 +58,14 @@ public class IntToRoman {
         return countStr(ftens, "L") + countStr(num/10, "X") + dealGeWei(num%10);
     }
 
-    public String dealGeWei(int num){
+    public static String dealGeWei(int num){
         if(num == 9) return "IX";
         if(num == 4) return "IV";
         if(num >= 5) return "V" + dealGeWei(num % 5);
         return countStr(num, "I");
     }
 
-    public String countStr(int count, String num){
+    public static String countStr(int count, String num){
         if(count == 0) return "";
 
         String result = "";
@@ -76,14 +76,13 @@ public class IntToRoman {
     }
 
     public static void main(String[] args) {
-        IntToRoman intToRoman = new IntToRoman();
-        System.out.println(intToRoman.intToRoman(3));
-        System.out.println(intToRoman.intToRoman(4));
-        System.out.println(intToRoman.intToRoman(9));
-        System.out.println(intToRoman.intToRoman(58));
-        System.out.println(intToRoman.intToRoman(1994));
-        System.out.println(intToRoman.intToRoman(3994));
-        System.out.println(intToRoman.intToRoman(205));
-        System.out.println(intToRoman.intToRoman(20));
+        System.out.println(IntToRoman.intToRoman(3));
+        System.out.println(IntToRoman.intToRoman(4));
+        System.out.println(IntToRoman.intToRoman(9));
+        System.out.println(IntToRoman.intToRoman(58));
+        System.out.println(IntToRoman.intToRoman(1994));
+        System.out.println(IntToRoman.intToRoman(3994));
+        System.out.println(IntToRoman.intToRoman(205));
+        System.out.println(IntToRoman.intToRoman(20));
     }
 }

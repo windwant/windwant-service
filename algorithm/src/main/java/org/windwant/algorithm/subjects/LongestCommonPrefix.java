@@ -7,7 +7,7 @@ package org.windwant.algorithm.subjects;
  */
 public class LongestCommonPrefix {
 
-    public String longestCommonPrefix(String[] strs) {
+    public static String longestCommonPrefix(String[] strs) {
         if(strs == null || strs.length == 0) return "";
         String shortStr = strs[0];
         for (String str : strs) {
@@ -53,6 +53,6 @@ public class LongestCommonPrefix {
 
     public static void main(String[] args) {
         String[] strs = {"abab","aba", ""};
-        System.out.println(new LongestCommonPrefix().longestCommonPrefix(strs));
+        System.out.println(LongestCommonPrefix.longestCommonPrefix(strs));
     }
 }

@@ -16,7 +16,7 @@ public class FindMedianSortedArrays {
      * @param nums2
      * @return
      */
-    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+    public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
         int lgn1 = nums1.length;
         int lgn2 = nums2.length;
         int allLgn = lgn1 + lgn2;
@@ -60,9 +60,9 @@ public class FindMedianSortedArrays {
     public static void main(String[] args) {
         int[] nums1 = {1, 3};
         int[] nums2 = {2};
-        System.out.println(new FindMedianSortedArrays().findMedianSortedArrays(nums1, nums2));
+        System.out.println(FindMedianSortedArrays.findMedianSortedArrays(nums1, nums2));
         nums1 = new int[]{1, 2};
         nums2 = new int[]{3, 4};
-        System.out.println(new FindMedianSortedArrays().findMedianSortedArrays(nums1, nums2));
+        System.out.println(FindMedianSortedArrays.findMedianSortedArrays(nums1, nums2));
     }
 }

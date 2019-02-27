@@ -8,7 +8,7 @@ package org.windwant.algorithm.subjects;
  */
 public class MaxAreaOfArray {
 
-    public int maxArea(int[] height) {
+    public static int maxArea(int[] height) {
         int area = 0, lgn = height.length;
         if(lgn < 2) return 0;
 
@@ -23,7 +23,7 @@ public class MaxAreaOfArray {
         return area;
     }
 
-    public int maxArea2(int[] height) {
+    public static int maxArea2(int[] height) {
         int area = 0, lgn = height.length;
         if(lgn < 2) return 0;
 
@@ -40,13 +40,12 @@ public class MaxAreaOfArray {
     }
 
     public static void main(String[] args) {
-        MaxAreaOfArray maxAreaOfArray = new MaxAreaOfArray();
         int[] arr = {1,8,6,2,5,4,8,3,7};
         long t = System.nanoTime();
-        System.out.println(maxAreaOfArray.maxArea(arr));
+        System.out.println(MaxAreaOfArray.maxArea(arr));
         System.out.println("maxArea use time: " + (System.nanoTime() - t));
         t = System.nanoTime();
-        System.out.println(maxAreaOfArray.maxArea2(arr));
+        System.out.println(MaxAreaOfArray.maxArea2(arr));
         System.out.println("maxArea: use time: " + (System.nanoTime() - t));
     }
 }

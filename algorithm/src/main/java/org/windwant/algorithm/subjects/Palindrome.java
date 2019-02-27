@@ -11,7 +11,7 @@ public class Palindrome {
      * @param x
      * @return
      */
-    public boolean isPalindrome(int x) {
+    public static boolean isPalindrome(int x) {
         String s = String.valueOf(x);
         int lgn = s.length();
         for (int i = 0,j = lgn -1; i <= j; i++,j--){
@@ -25,6 +25,6 @@ public class Palindrome {
     }
 
     public static void main(String[] args) {
-        System.out.println(new Palindrome().isPalindrome(12321));
+        System.out.println(Palindrome.isPalindrome(12321));
     }
 }

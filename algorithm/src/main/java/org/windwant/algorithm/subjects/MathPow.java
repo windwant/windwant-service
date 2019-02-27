@@ -26,7 +26,6 @@ public class MathPow {
     }
 
     public static void main(String[] args) {
-        MathPow mathPow = new MathPow();
-        System.out.println(mathPow.power(2, 10));
+        System.out.println(MathPow.power(2, 10));
     }
 }

@@ -14,7 +14,7 @@ public class TwoSum {
      * @param target
      * @return
      */
-    public int[] twoSum(int[] nums, int target) {
+    public static int[] twoSum(int[] nums, int target) {
         int lgn = nums.length;
         for(int i = 0; i < lgn; i++){
             for(int j = i + 1; j < lgn; j++){
@@ -29,6 +29,6 @@ public class TwoSum {
     public static void main(String[] args) {
         int[] nums = {2, 7, 11, 15};
         int target = 9;
-        System.out.println(Arrays.toString(new TwoSum().twoSum(nums, target)));
+        System.out.println(Arrays.toString(TwoSum.twoSum(nums, target)));
     }
 }
