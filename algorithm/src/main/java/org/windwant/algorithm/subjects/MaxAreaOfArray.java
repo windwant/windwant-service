@@ -8,6 +8,11 @@ package org.windwant.algorithm.subjects;
  */
 public class MaxAreaOfArray {
 
+    /**
+     * 枚举
+     * @param height
+     * @return
+     */
     public static int maxArea(int[] height) {
         int area = 0, lgn = height.length;
         if(lgn < 2) return 0;
@@ -23,6 +28,11 @@ public class MaxAreaOfArray {
         return area;
     }
 
+    /**
+     * 双指针
+     * @param height
+     * @return
+     */
     public static int maxArea2(int[] height) {
         int area = 0, lgn = height.length;
         if(lgn < 2) return 0;

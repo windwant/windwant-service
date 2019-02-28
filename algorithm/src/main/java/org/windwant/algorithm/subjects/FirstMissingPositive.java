@@ -12,6 +12,11 @@ import java.util.Map;
  */
 public class FirstMissingPositive {
 
+    /**
+     * 数组操作
+     * @param nums
+     * @return
+     */
     public static int firstMissingPositive(int[] nums) {
         int max = 0;
         for (int i = 0; i < nums.length; i++) {
@@ -36,6 +41,11 @@ public class FirstMissingPositive {
         return false;
     }
 
+    /**
+     * map操作
+     * @param nums
+     * @return
+     */
     public static int firstMissingPositive1(int[] nums) {
         Map<Integer, Integer> vs = new HashMap<>();
         int max = 0;

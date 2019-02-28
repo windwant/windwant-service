@@ -8,11 +8,19 @@ import java.util.Arrays;
  * Created by Administrator on 19-2-28.
  */
 public class RainWaterArea {
+    /**
+     * 分割
+     * @param height
+     * @return
+     */
     public static int trap(int[] height) {
+        //最大索引位置
         int maxIndex = findMax(height);
 
         int lsubMaxindex = maxIndex, rsubMaxIndex = maxIndex;
         int area = 0;
+
+        //左边处理
         while (lsubMaxindex > 0){
             int tmpMax = lsubMaxindex;
             lsubMaxindex = findMax(Arrays.copyOfRange(height, 0, tmpMax));
@@ -22,6 +30,7 @@ public class RainWaterArea {
             }
         }
 
+        //右边处理
         while (rsubMaxIndex < height.length - 1){
             int tmpMax = rsubMaxIndex;
             rsubMaxIndex = tmpMax + findMax(Arrays.copyOfRange(height, tmpMax + 1, height.length)) + 1;

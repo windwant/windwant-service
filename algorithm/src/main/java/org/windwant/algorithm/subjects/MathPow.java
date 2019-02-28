@@ -8,6 +8,12 @@ package org.windwant.algorithm.subjects;
  */
 public class MathPow {
 
+    /**
+     * 快速降幂 避免递归过深造成栈溢出
+     * @param x
+     * @param n
+     * @return
+     */
     public static double power(double x, int n) {
         if(!(x > -100 && x < 100)) return 0;
         if(!(n <= Integer.MAX_VALUE && n >= Integer.MIN_VALUE)) return 0;

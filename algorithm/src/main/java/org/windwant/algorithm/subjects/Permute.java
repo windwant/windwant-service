@@ -9,6 +9,11 @@ import java.util.*;
  */
 public class Permute {
 
+    /**
+     * 递归处理
+     * @param nums
+     * @return
+     */
     public static List<List<Integer>> permute(int[] nums) {
         List<List<Integer>> result = new ArrayList();
         if(nums.length == 1) {
@@ -30,6 +35,12 @@ public class Permute {
         return result;
     }
 
+    /**
+     * 递归处理
+     * Set 处理重复
+     * @param nums
+     * @return
+     */
     public static List<List<Integer>> permuteUnique(int[] nums) {
         List<List<Integer>> result = new ArrayList();
         if(nums.length == 1) {
