@@ -60,6 +60,11 @@ public class FirstMissingPositive {
 //        int[] nums = {3,4,-1,1};
 //        int[] nums = {7,8,9,11,12};
         int[] nums = {2147483647};
+        long t = System.nanoTime();
         System.out.println(firstMissingPositive(nums));
+        System.out.println("1: " + (System.nanoTime() - t));
+        t = System.nanoTime();
+        System.out.println(firstMissingPositive1(nums));
+        System.out.println("2: " + (System.nanoTime() - t));
     }
 }
