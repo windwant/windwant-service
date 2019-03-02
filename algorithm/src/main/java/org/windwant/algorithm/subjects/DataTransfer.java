@@ -23,7 +23,28 @@ public class DataTransfer {
         return sb.toString();
     }
 
+    /**
+     * 10进制转16进制
+     */
+    public static String BASE_H = "0123456789ABCDEF";
+    public static int SCALE_H = 16;
+    public static String transferDTH(int num) {
+        StringBuilder sb = new StringBuilder();
+
+        while (num > 0) {
+            //余数对照进制基本位 BASE 放到相应位置
+            sb.append(BASE_H.charAt(num % SCALE_H));
+            //除处理下一进位
+            num = num / SCALE_H;
+        }
+
+        sb.reverse();
+
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         System.out.println(transfer(62));
+        System.out.println(transferDTH(62));
     }
 }
