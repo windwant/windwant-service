@@ -19,28 +19,6 @@ import java.util.List;
 public class RemoveNthFromEnd {
     public static ListNode removeNthFromEnd(ListNode head, int n) {
         ListNode first = head;
-        int index = 0, subIndex = 0, preDiff = 0;
-
-        boolean dealed = false;
-
-        while (first != null){
-            if(!dealed && subIndex != 0 && preDiff == index - subIndex){
-                first = first.next;
-                dealed = true;
-            }
-            first = first.next;
-            if(index - subIndex >= n){
-                subIndex++;
-            }
-            index++;
-
-            preDiff = index - subIndex;
-        }
-        return head;
-    }
-
-    public static ListNode removeNthFromEnd1(ListNode head, int n) {
-        ListNode first = head;
         //subIndex 第n个元素的索引
         int index = 0, subIndex = 0;
 
@@ -77,7 +55,7 @@ public class RemoveNthFromEnd {
         ListNode l5 = new ListNode(5);
         l4.next = l5;
 
-        ListNode result = removeNthFromEnd1(l1, 5);
+        ListNode result = removeNthFromEnd(l1, 5);
         while (result != null){
             System.out.print(result.val + " ");
             result = result.next;
