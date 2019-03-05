@@ -13,7 +13,7 @@ public class AddTwoNumbers {
      * @param l2
      * @return
      */
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode head = null;
         ListNode curr = null;
         while (l1 != null || l2 != null){
@@ -44,7 +44,7 @@ public class AddTwoNumbers {
         return head;
     }
 
-    public ListNode initNode(ListNode curr, ListNode newNode){
+    public static ListNode initNode(ListNode curr, ListNode newNode){
         if(curr != null){
             curr.next = newNode;
         }
@@ -66,7 +66,7 @@ public class AddTwoNumbers {
         ListNode l23 = new ListNode(4);
         l22.next = l23;
 
-        ListNode result = new AddTwoNumbers().addTwoNumbers(l1, l2);
+        ListNode result =addTwoNumbers(l1, l2);
         while (result != null){
             System.out.print(result.val + " ");
             result = result.next;
