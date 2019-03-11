@@ -1,10 +1,14 @@
-package org.windwant.algorithm.sort;
+package org.windwant.algorithm.sort.insertion;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 将剩余未排序的逐个插入到已排序的集合中
+ *
+ * 外层循环 n - 1次，
+ * 最差 对应内层 1 2  ... n - 1  需要对比 (1 + n - 1)*(n - 1)/2 = n^2/2 - 1/2次  O(n^2)
+ * 最优 对应内存 1 1  .... 1 需要对比n次  O(n)
  * Created by windwant on 2016/12/5.
  */
 public class InsertionSort {

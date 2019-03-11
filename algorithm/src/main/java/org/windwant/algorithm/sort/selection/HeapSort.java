@@ -1,10 +1,11 @@
-package org.windwant.algorithm.sort;
+package org.windwant.algorithm.sort.selection;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 堆排序
+ * 时间复杂度 O(n log n)
  * Created by windwant on 2016/12/6.
  */
 public class HeapSort {

@@ -1,4 +1,4 @@
-package org.windwant.algorithm.sort;
+package org.windwant.algorithm.sort.distribution;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

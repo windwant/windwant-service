@@ -1,10 +1,11 @@
-package org.windwant.algorithm.sort;
+package org.windwant.algorithm.sort.merge;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 归并排序
+ * O(nlogn)
  * Created by windwant on 2016/12/5.
  */
 public class MergeSort {

@@ -1,10 +1,11 @@
-package org.windwant.algorithm.sort;
+package org.windwant.algorithm.sort.exchange;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 两两对比相邻的
+ * 连续交换
  * Created by windwant on 2016/12/5.
  */
 public class BubbleSort {
